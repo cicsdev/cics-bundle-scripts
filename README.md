@@ -1,2 +1,2 @@
 # cics-bundle-scripts
-Scripts to work with CICS bundles
+Scripts to validate CICS bundles
