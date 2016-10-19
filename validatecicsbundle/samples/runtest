@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BUNDLE="catalog.example.service"
+
+echo "About to run validatecicsbundle -v -r rules.txt ${BUNDLE}"
+echo "---"
+../validatecicsbunde -v -r rules.txt "${BUNDLE}"
+RC=$?
+echo "---"
+echo "Completed with return code ${RC}"
+exit
