@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><cicsdefinitionurimap xmlns="http://www.ibm.com/xmlns/prod/CICS/smw2int" authenticate="NO" characterset="UTF-8" hfsfile="DFH0XCMN.wsdl" host="*" hostcodepage="1208" mediatype="text/xml" name="EXINQCSW" path="${context.root}/DFH0XCMN?wsdl" scheme="HTTP" usage="SERVER"/>
