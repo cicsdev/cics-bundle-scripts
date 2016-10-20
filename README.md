@@ -12,7 +12,8 @@ Script to validate contents of a CICS bundle against a set of rules
 * Linux bash shell
 
 ## Usage
-`
+
+~~~~
 Usage:  validatecicsbunde [-hv] -r FILE DIRECTORY
 
 Validate the CICS bundle specified by DIRECTORY using the rules specified by FILE.
@@ -56,4 +57,4 @@ Example ~/rules/production.txt:
 
         # JVMSERVER resource must not be present
         cics.xml boolean(//*[local-name()='define'][@type=http://www.ibm.com/xmlns/prod/cics/bundle/JVMSERVER]) false
-`
+~~~~
