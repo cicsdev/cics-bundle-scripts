@@ -1,0 +1,248 @@
+#!/bin/bash
+#############################################################################################
+# Script to validate contents of a CICS bundle against a set of rules
+#
+# Licensed Materials - Property of IBM.
+# (c) Copyright IBM Corporation 2016. All Rights Reserved.
+# US Government Users Restricted Rights
+# Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corporation
+#############################################################################################
+
+show_usage () {
+	echo -e "Usage:\t"$(basename "$0") "[-hv] [-f FILEPATTERN -x XPATH -e REGEX] [-r FILE] DIRECTORY"
+}
+
+show_help () {
+	show_usage
+	echo
+	echo "Validate the CICS bundle specified by DIRECTORY against a rule specified by the -f -x -e options"
+	echo "and/or the rules specified in FILE. The script return code is set to 0 if all rules validate to"
+	echo "true, otherwise it is set to > 0."
+  	echo
+  	echo "Options:"
+  	echo -e "\t-h, --help\t\t\tHelp"
+  	echo -e "\t-v, --verbose\t\t\tVerbose messages"
+  	  	echo -e "\t-f, --filepattern FILEPATTERN\tRule file pattern"
+  	echo -e "\t-x, --xpath XPATH\t\tRule XPath to evaluate"
+  	echo -e "\t-e, --regex REGEX\t\tRule regular expression that the XPath is required to match"
+  	echo -e "\t-r, --rules FILE\t\tFile containing a rules"
+  	echo -e "\tDIRECTORY is the CICS bundle directory to be validated."
+  	echo
+  	echo -e "\tFILE is a file containing a logical set of rules, one on each line. Comments starting with"
+	echo -e "\t#, blank lines, and tab characters are ignored. Each rule in FILE should follow the format:"
+  	echo -e "\tFILEPATTERN XPATH REGEX"
+  	echo
+  	echo "Examples:"
+  	echo -e "\tFor CICS bundle catalog.example.service validate that all *.urimap files contain an attribute"
+  	echo -e "\t'name' with a value that starts with the characters EX:"
+  	echo -e "\t"$(basename "$0") '-f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service'
+  	echo
+  	echo -e "\tFor CICS bundle catalog.example.service validate the rules specified in file"
+  	echo -e "\t~/rules/production.txt:"
+  	echo -e "\t"$(basename "$0") "-r ~/rules/production.txt catalog.example.service"
+	echo
+  	echo "Example ~/rules/production.txt:"
+	echo -e "\t# The resource name for all URIMAPs must start with EX" 
+	echo -e "\t*.urimap string(//@name) ^EX"
+	echo
+	echo -e "\t# For URIMAPs the scheme attribute must be HTTP"
+	echo -e "\t*.urimap string(//@scheme) HTTP"
+	echo
+	echo -e "\t# For URIMAPs the authenticate attribute must be NO"
+	echo -e "\t*.urimap string(//@authenticate) NO"
+	echo
+	echo -e "\t# For WEBSERVICEs the pipeline attribute must be PIPE01"
+	echo -e "\t*.webservice string(//@pipeline) PIPE01"
+	echo
+	echo -e "\t# For WEBSERVICEs the wsdlfile attribute must be present"
+	echo -e "\t*.webservice boolean(//*[@validation]) true"
+	echo
+	echo -e "\t# The JVMSERVER resource must not be present"
+	echo -e "\tcics.xml boolean(//*[local-name()='define'][@type=\"http://www.ibm.com/xmlns/prod/cics/bundle/JVMSERVER\"]) false"
+}
+
+# Function to validate the XPATH value against a regular expression
+validate_xpath () {
+	local XPATH=$1
+	local REGEX=$2
+	local FILE=$3
+	local RULE=$4
+	local VALUE=$(xmllint --xpath "${XPATH}" "${FILE}")
+	local RC=$?
+
+	if [[ ${RC} != 0 ]] ; then
+		echo "xmllint gave return code ${RC}"
+		exit 1
+	fi
+
+	if [[ -z ${VALUE} ]]; then
+		RC=1
+	else
+		# Compare result of XPATH with expected regex
+		echo ${VALUE} | $(sed -n '/'${REGEX}'/!{q2}')
+		RC=$?
+	fi
+
+	if [[ ${RC} == 1 ]] ; then
+		echo "File:${FILE} Rule ${RULE}: XPath:${XPATH} failed"
+	elif [[ ${RC} == 2 ]] ; then
+		echo "File:${FILE} Rule ${RULE}: XPath:${XPATH}=${VALUE} did not match regex ${REGEX}"
+	elif [[ $VERBOSE == 1 ]] ; then
+		echo "File:${FILE} Rule ${RULE}: XPath:${XPATH}=${VALUE} matched regex ${REGEX}"
+	fi
+	
+	exit ${RC}
+}
+
+# Function to validate a specified resource file
+validate_rules_for_file () {
+	local TOTALRC=0
+	local RC=0
+	local FILE=${1}
+	local FILEBASENAME=$(basename "$FILE")
+
+	for (( i = 0 ; (i * 3) < ${#VALIDATIONS[@]} ; i += 1 )) ; do
+		case "$FILEBASENAME" in (${VALIDATIONS[${i}*3]}) 
+			MESSAGE=$(validate_xpath "${VALIDATIONS[${i}*3+1]}" "${VALIDATIONS[${i}*3+2]}" "${FILE}" "$i")
+			RC=$?
+
+			if [[ ! -z ${MESSAGE} ]] ; then 
+				echo -n ${MESSAGE}"\n"
+			fi
+			
+			TOTALRC=$((TOTALRC + RC)) ;;
+		esac
+	done
+
+	exit ${TOTALRC}
+}
+
+# Function to validate a CICS bundle
+validate_cics_bundle() { 
+	# For each file in the bundle that is not hidden, validate it against the rules
+	if [[ $VERBOSE == 1 ]] ; then
+			echo "Validating files in directory ${DIRECTORY} against rules:"
+	fi
+	
+	cd ${DIRECTORY}
+	for FILE in $(find . -type f -not -path '*/\.*' -name "*") ; do
+		MESSAGE=$(validate_rules_for_file "${FILE}")
+		RC=$?
+  
+		if [[ ! -z ${MESSAGE} ]] ; then 
+			echo -n -e "${MESSAGE}"
+		fi
+
+		TOTALRC=$((TOTALRC + RC))
+	done
+}
+
+# Process script long options by transforming them to the short option equivalent
+for arg in "$@" ; do
+  	shift
+  	case "$arg" in
+		"--filepattern")
+			set -- "$@" "-f" ;;
+		"--xpath")
+			set -- "$@" "-x" ;;
+		"--regex")
+			set -- "$@" "-e" ;;
+		"--rules")
+			set -- "$@" "-r" ;;
+    	"--verbose")
+    		set -- "$@" "-v" ;;
+    	"--help")
+    		set -- "$@" "-h" ;;
+    	*)
+    	    set -- "$@" "$arg"
+	esac
+done
+
+# Process script short options
+VERBOSE=0
+while getopts ":f:x:e:r:vh" opt ; do
+	case "$opt" in
+		f)
+			FILEPATTERN=${OPTARG} ;;
+		x)
+			XPATH=${OPTARG} ;;
+		e)
+			REGEX=${OPTARG} ;;
+		r)
+			RULES=${OPTARG} ;;
+		v)
+			VERBOSE=1 ;;
+		h)
+			show_help
+			exit 0 ;;
+	esac
+done
+shift $((OPTIND-1))
+
+# The remainder of the command line is the CICS bundle directory
+DIRECTORY=$@
+TOTALRC=0
+
+# Validate directory is a CICS bundle
+if [[ -z "${DIRECTORY}" ]] ; then
+	echo "DIRECTORY was not specified"
+	show_usage
+	exit 1
+elif [[ ! -d "${DIRECTORY}" ]] ; then
+	echo "${DIRECTORY} is not a directory"
+	show_usage
+	exit 1
+elif [[ ! -f "${DIRECTORY}/META-INF/cics.xml" ]] ; then
+	echo "${DIRECTORY} directory is not a CICS bundle"
+	show_usage
+	exit 1
+fi
+
+# Validate rules file
+if [[ ! -z ${RULES} ]] ; then
+	if [[ ! -f ${RULES} ]] ; then
+		echo "${RULES} is not a file, or does not exist"
+		show_usage
+		exit 1
+	fi
+
+	# Load the rules file, strip blank lines, and strip character "#" and trailing characters
+	RULES_CONTENTS=$(sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d ; s/\t/ /g' "${RULES}")
+fi
+
+# Pre-pend the rule specified on the comment line
+if [[ ! -z ${FILEPATTERN} ]] && [[ ! -z ${XPATH} ]] && [[ ! -z ${REGEX} ]] ; then
+	NEWLINE=$'\n'
+	RULES_CONTENTS="${FILEPATTERN} ${XPATH} ${REGEX}${NEWLINE}${RULES_CONTENTS}"
+fi
+
+# For each rule, extract 1st word as file pattern, 2nd word as xpath, and remaining words as regex
+INDEX=0
+while read -r FILEPATTERN XPATH REGEX ; do
+	if [[ -z "${FILEPATTERN}" ]] ||  [[ -z "${XPATH}" ]] || [[ -z "${REGEX}" ]] ; then
+		continue
+	fi
+	
+	VALIDATIONS[(${INDEX}*3)]="$FILEPATTERN"
+	VALIDATIONS[(${INDEX}*3)+1]="$XPATH"
+	VALIDATIONS[(${INDEX}*3)+2]="$REGEX"
+
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Rule ${INDEX}: File pattern:${FILEPATTERN} XPath:${XPATH} regex:${REGEX}"
+	fi
+
+	INDEX=$((INDEX + 1))
+done <<< "$RULES_CONTENTS"
+
+if [[ ${INDEX} = 0 ]] ; then
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "No rules found"
+	fi
+else
+	validate_cics_bundle	
+fi
+
+if [[ $VERBOSE == 1 ]] ; then
+	echo "Exiting with RC=${TOTALRC}"
+fi
+exit ${TOTALRC}
