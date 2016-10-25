@@ -3,7 +3,7 @@ Sample scripts to process a CICS bundle.
 
 
 # validatecicsbundle
-Script to validate contents of a CICS bundle against a set of rules
+Script to validate contents of a CICS bundle against a set of rules.
 
 ## Requirements
 
@@ -14,47 +14,48 @@ Script to validate contents of a CICS bundle against a set of rules
 ## Usage
 
 ~~~~
-Usage:  validatecicsbunde [-hv] -r FILE DIRECTORY
-
-Validate the CICS bundle specified by DIRECTORY using the rules specified by FILE.
-The script return code is set to 0 if all rules validate, otherwise it is set to >0
-
+Validate the CICS bundle specified by DIRECTORY against a rule specified by the -f -x -e options
+and/or the rules specified in FILE. The script return code is set to 0 if all rules validate to
+true, otherwise it is set to > 0.
+  
 Options:
-        -h, --help              Help
-        -r, --rules FILE        Rules file
-        -v, --verbose           Verbose output
-
-Example:
-        validatecicsbunde -r ~/rules/production.txt ~/built/bundles/MyBundle
-
-DIRECTORY is the CICS bundle directory to be validated.
-FILE is a text file containing rules, one on each line, in the following format:
-        file xpath regex
-
-        where:
-
-        file is the file patthern, such as *.urimap or cics.xml
-        xpath is the xpath expression to evaluate
-        regex is the regular express the xpath expression must match
-
-        Comments starting with #, blank lines, and tab characters are ignored
+	-h, --help						Help
+	-v, --verbose					Verbose messages
+	-f, --filepattern FILEPATTERN	Rule file pattern
+	-x, --xpath XPATH				Rule XPath to evaluate
+	-e, --regex REGEX				Rule regular expression that the XPath is required to match
+	-r, --rules FILE				File containing a rules
+	DIRECTORY is the CICS bundle directory to be validated.
+  
+	FILE is a file containing a logical set of rules, one on each line. Comments starting with
+	#, blank lines, and tab characters are ignored. Each rule in FILE should follow the format:
+	FILEPATTERN XPATH REGEX
+  
+Examples:
+	For CICS bundle catalog.example.service validate that all *.urimap files contain an attribute
+	'name' with a value that starts with the characters EX:
+	$(basename "$0") '-f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service
+  
+	For CICS bundle catalog.example.service validate the rules specified in file
+	~/rules/production.txt:
+	$(basename "$0") "-r ~/rules/production.txt catalog.example.service
 
 Example ~/rules/production.txt:
-        # The resource name for all URIMAPs must start with EX
-        *.urimap string(//@name) ^EX
+	# The resource name for all URIMAPs must start with EX 
+	*.urimap string(//@name) ^EX
 
-        # All URIMAP scheme attribute must be HTTP
-        *.urimap string(//@scheme) HTTP
+	# For URIMAPs the scheme attribute must be HTTP
+	*.urimap string(//@scheme) HTTP
 
-        # All URIMAP authenticate attribute must be NO
-        *.urimap string(//@authenticate) NO
+	# For URIMAPs the authenticate attribute must be NO
+	*.urimap string(//@authenticate) NO
 
-        # All WEBSERVICE pipeline attribute must be PIPE01
-        *.webservice string(//@pipeline) PIPE01
+	# For WEBSERVICEs the pipeline attribute must be PIPE01
+	*.webservice string(//@pipeline) PIPE01
 
-        # All WEBSERVICE wsdlfile attribute must be present
-        *.webservice boolean(//*[@validation]) true
+	# For WEBSERVICEs the wsdlfile attribute must be present
+	*.webservice boolean(//*[@validation]) true
 
-        # JVMSERVER resource must not be present
-        cics.xml boolean(//*[local-name()='define'][@type=http://www.ibm.com/xmlns/prod/cics/bundle/JVMSERVER]) false
+	# The JVMSERVER resource must not be present
+	cics.xml boolean(//*[local-name()='define'][@type=\"http://www.ibm.com/xmlns/prod/cics/bundle/JVMSERVER\"]) false
 ~~~~
