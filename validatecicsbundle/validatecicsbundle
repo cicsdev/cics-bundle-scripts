@@ -22,15 +22,15 @@ show_help () {
   	echo "Options:"
   	echo -e "\t-h, --help\t\t\tHelp"
   	echo -e "\t-v, --verbose\t\t\tVerbose messages"
-  	  	echo -e "\t-f, --filepattern FILEPATTERN\tRule file pattern"
+  	echo -e "\t-f, --filepattern FILEPATTERN\tRule file pattern"
   	echo -e "\t-x, --xpath XPATH\t\tRule XPath to evaluate"
   	echo -e "\t-e, --regex REGEX\t\tRule regular expression that the XPath is required to match"
   	echo -e "\t-r, --rules FILE\t\tFile containing a rules"
   	echo -e "\tDIRECTORY is the CICS bundle directory to be validated."
   	echo
-  	echo -e "\tFILE is a file containing a logical set of rules, one on each line. Comments starting with"
-	echo -e "\t#, blank lines, and tab characters are ignored. Each rule in FILE should follow the format:"
-  	echo -e "\tFILEPATTERN XPATH REGEX"
+  	echo -e "\tFILE is a file containing a logical set of rules, one on each line. Escape characters can be used."
+    echo -e "\tComments starting with #, blank lines, and tab characters are ignored."
+    echo -e "\tEach rule in FILE should follow the format: FILEPATTERN XPATH REGEX"
   	echo
   	echo "Examples:"
   	echo -e "\tFor CICS bundle catalog.example.service validate that all *.urimap files contain an attribute"
@@ -39,9 +39,9 @@ show_help () {
   	echo
   	echo -e "\tFor CICS bundle catalog.example.service validate the rules specified in file"
   	echo -e "\t~/rules/production.txt:"
-  	echo -e "\t"$(basename "$0") "-r ~/rules/production.txt catalog.example.service"
+  	echo -e "\t"$(basename "$0") "-r rules.txt -v catalog.example.service"
 	echo
-  	echo "Example ~/rules/production.txt:"
+  	echo "Example rules.txt:"
 	echo -e "\t# The resource name for all URIMAPs must start with EX" 
 	echo -e "\t*.urimap string(//@name) ^EX"
 	echo
@@ -218,7 +218,7 @@ fi
 
 # For each rule, extract 1st word as file pattern, 2nd word as xpath, and remaining words as regex
 INDEX=0
-while read -r FILEPATTERN XPATH REGEX ; do
+while read FILEPATTERN XPATH REGEX ; do
 	if [[ -z "${FILEPATTERN}" ]] ||  [[ -z "${XPATH}" ]] || [[ -z "${REGEX}" ]] ; then
 		continue
 	fi

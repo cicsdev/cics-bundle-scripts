@@ -1,10 +1,13 @@
 #!/bin/bash
 
 BUNDLE="catalog.example.service"
+RULES="rules.txt"
 
-echo "About to run validatecicsbundle -v -r rules.txt ${BUNDLE}"
+COMMAND=( ../validatecicsbundle --verbose --rules "${RULES}" ${BUNDLE} )
+
+echo "About to run ${COMMAND[@]}"
 echo "---"
-../validatecicsbunde -v -r rules.txt "${BUNDLE}"
+"${COMMAND[@]}"
 RC=$?
 echo "---"
 echo "Completed with return code ${RC}"
