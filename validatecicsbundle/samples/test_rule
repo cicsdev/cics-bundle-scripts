@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BUNDLE="catalog.example.service"
+FILES="*.urimap"
+XPATH="string(//@name)"
+REGEX="^EX"
+
+COMMAND=( ../validatecicsbundle -v -f "${FILES}" -x "${XPATH}" -e "${REGEX}" ${BUNDLE} )
+
+echo "About to run ${COMMAND[@]}"
+echo "---"
+"${COMMAND[@]}"
+RC=$?
+echo "---"
+echo "Completed with return code ${RC}"
+exit
