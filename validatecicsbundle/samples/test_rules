@@ -1,0 +1,14 @@
+#!/bin/bash
+
+BUNDLE="catalog.example.service"
+RULES="rules.txt"
+
+COMMAND=( ../validatecicsbundle --verbose --rules "${RULES}" ${BUNDLE} )
+
+echo "About to run ${COMMAND[@]}"
+echo "---"
+"${COMMAND[@]}"
+RC=$?
+echo "---"
+echo "Completed with return code ${RC}"
+exit
