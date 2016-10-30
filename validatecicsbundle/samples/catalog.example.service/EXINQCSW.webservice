@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><cicsdefinitionwebservice xmlns="http://www.ibm.com/xmlns/prod/CICS/smw2int" description="CICS Catalog Example inquire single service" name="EXINQCSW" pipeline="PIPE01" validation="NO" wsbind="DFH0XCMN.wsbind" wsdlfile="DFH0XCMN.wsdl"/>

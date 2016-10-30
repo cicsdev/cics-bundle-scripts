@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="catalog.example.service" bundleMajorVer="1" bundleMinorVer="0" bundleMicroVer="0" bundleVersion="1" bundleRelease="0" build="IntB-201511072132">
-    <meta_directives>
-        <timestamp>2016-01-18T14:58:31.832Z</timestamp>
-    </meta_directives>
-    <define name="EXINQCSW" type="http://www.ibm.com/xmlns/prod/cics/bundle/WEBSERVICE" path="EXINQCSW.webservice"/>
-    <define name="EXINQCS" type="http://www.ibm.com/xmlns/prod/cics/bundle/URIMAP" path="EXINQCS.urimap"/>
-    <define name="EXINQCSW" type="http://www.ibm.com/xmlns/prod/cics/bundle/URIMAP" path="EXINQCSW.urimap"/>
-</manifest>

@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><cicsdefinitionurimap xmlns="http://www.ibm.com/xmlns/prod/CICS/smw2int" authenticate="NO" host="${host}" name="EXINQCS" path="${context.root}/DFH0XCMN" pipeline="${pipeline}" scheme="HTTP" transaction="CPIH" usage="PIPELINE" webservice="EXINQCSW"/>
