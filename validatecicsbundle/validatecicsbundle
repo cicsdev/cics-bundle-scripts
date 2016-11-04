@@ -25,7 +25,7 @@ show_help () {
   	echo -e "\t-f, --filepattern FILEPATTERN\tRule file pattern"
   	echo -e "\t-x, --xpath XPATH\t\tRule XPath to evaluate"
   	echo -e "\t-e, --regex REGEX\t\tRule regular expression that the XPath is required to match"
-  	echo -e "\t-r, --rules FILE\t\tFile containing a rules"
+  	echo -e "\t-r, --rules FILE\t\tFile containing a set of rules"
   	echo -e "\tDIRECTORY is the CICS bundle directory to be validated."
   	echo
   	echo -e "\tFILE is a file containing a logical set of rules, one on each line. Escape characters can be used."
@@ -37,11 +37,10 @@ show_help () {
   	echo -e "\t'name' with a value that starts with the characters EX:"
   	echo -e "\t"$(basename "$0") '-f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service'
   	echo
-  	echo -e "\tFor CICS bundle catalog.example.service validate the rules specified in file"
-  	echo -e "\t~/rules/production.txt:"
+  	echo -e "\tFor CICS bundle catalog.example.service validate the rules specified in file rules.txt:"
   	echo -e "\t"$(basename "$0") "-r rules.txt -v catalog.example.service"
 	echo
-  	echo "Example rules.txt:"
+  	echo "Example rules file:"
 	echo -e "\t# The resource name for all URIMAPs must start with EX" 
 	echo -e "\t*.urimap string(//@name) ^EX"
 	echo

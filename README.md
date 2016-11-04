@@ -26,7 +26,7 @@ Options:
         -f, --filepattern FILEPATTERN   Rule file pattern
         -x, --xpath XPATH               Rule XPath to evaluate
         -e, --regex REGEX               Rule regular expression that the XPath is required to match
-        -r, --rules FILE                File containing a rules
+        -r, --rules FILE                File containing a set of rules
         DIRECTORY is the CICS bundle directory to be validated.
 
         FILE is a file containing a logical set of rules, one on each line. Escape characters can be used.
@@ -38,11 +38,10 @@ Examples:
         'name' with a value that starts with the characters EX:
         validatecicsbundle -f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service
 
-        For CICS bundle catalog.example.service validate the rules specified in file
-        ~/rules/production.txt:
+        For CICS bundle catalog.example.service validate the rules specified in file rules.txt:
         validatecicsbundle -r rules.txt -v catalog.example.service
 
-Example ~/rules/production.txt:
+Example rules file:
         # The resource name for all URIMAPs must start with EX
         *.urimap string(//@name) ^EX
 
