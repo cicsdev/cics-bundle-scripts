@@ -1,0 +1,123 @@
+#!/bin/bash
+#############################################################################################
+# Script to set the file tag for contents of a CICS bundle
+#
+# Licensed Materials - Property of IBM.
+# (c) Copyright IBM Corporation 2017. All Rights Reserved.
+# US Government Users Restricted Rights
+# Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corporation
+#############################################################################################
+
+show_usage () {
+	echo -e "Usage:\t"$(basename "$0") "[-hv] DIRECTORY"
+}
+
+show_help () {
+	show_usage
+	echo
+	echo "Set the tag for files in the CICS bundle specified by DIRECTORY."
+	echo
+	echo "Options:"
+	echo -e "\t-h, --help\t\t\tHelp"
+	echo -e "\t-v, --verbose\t\t\tVerbose messages"
+	echo -e "\tDIRECTORY is the CICS bundle directory"
+}
+
+# Function to tag a file according to its file type
+tag_file() { 
+	# chtag documentation https://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.bpxa500/chtag.htm
+	filename=$1
+	extension="${filename##*.}"
+
+	case "$extension" in
+	"transaction"|"file"|"jvmserver"|"library"|"pipeline"|"program"|"tcpipservice"|"urimap"|"webservice"|"osgibundle"|"warbundle"|"ebabundle"|"earbundle"|"xml"|"properties")
+		echo "$1 - tagging as UTF-8"
+		chtag -tc UTF-8 $1
+		;;
+	"jvmprofile")
+		echo "$1 - tagging to IBM-1047"
+		chtag -tc IBM-1047 $1
+		;;
+	*)
+		# Ignore file
+		;;
+	esac
+}
+
+# Function to tag each file in a CICS bundle
+tag_files_in_cics_bundle() { 
+	# For each file in the bundle that is not hidden, call a function to tag it
+	if [[ $VERBOSE == 1 ]] ; then
+			echo "Tagging files in directory ${DIRECTORY}"
+	fi
+
+	cd ${DIRECTORY}
+	for FILE in $(find . -type f -name "*") ; do
+		MESSAGE=$(tag_file "${FILE}")
+		RC=$?
+  
+		if [[ ! -z ${MESSAGE} ]] ; then 
+			echo -n -e "${MESSAGE}\n"
+		fi
+
+		TOTALRC=$((TOTALRC + RC))
+	done
+	
+	if [[ $VERBOSE == 1 ]] ; then
+		echo
+		echo "Summary for directory:"
+		ls -lRT ${DIRECTORY}
+	fi
+}
+
+# Process script long options by transforming them to the short option equivalent
+for arg in "$@" ; do
+  	shift
+  	case "$arg" in
+    	"--verbose")
+    		set -- "$@" "-v" ;;
+    	"--help")
+    		set -- "$@" "-h" ;;
+    	*)
+    	    set -- "$@" "$arg"
+	esac
+done
+
+# Process script short options
+VERBOSE=0
+while getopts ":f:x:e:r:vh" opt ; do
+	case "$opt" in
+		v)
+			VERBOSE=1 ;;
+		h)
+			show_help
+			exit 0 ;;
+	esac
+done
+shift $((OPTIND-1))
+
+# The remainder of the command line is the CICS bundle directory
+DIRECTORY=$@
+TOTALRC=0
+
+# Validate directory is a CICS bundle
+if [[ -z "${DIRECTORY}" ]] ; then
+	echo "DIRECTORY was not specified"
+	show_usage
+	exit 1
+elif [[ ! -d "${DIRECTORY}" ]] ; then
+	echo "${DIRECTORY} is not a directory"
+	show_usage
+	exit 1
+elif [[ ! -f "${DIRECTORY}/META-INF/cics.xml" ]] ; then
+	echo "${DIRECTORY} directory is not a CICS bundle"
+	show_usage
+	exit 1
+fi
+
+tag_files_in_cics_bundle
+
+if [[ $VERBOSE == 1 ]] ; then
+	echo "Exiting with RC=${TOTALRC}"
+fi
+exit ${TOTALRC}

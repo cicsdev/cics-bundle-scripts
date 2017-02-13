@@ -1,24 +1,21 @@
 # cics-bundle-scripts
 Sample scripts to process a CICS bundle.
 
-
 # validatecicsbundle
 Script to validate contents of a CICS bundle against a set of rules.
 
 ## Requirements
-
 * xmllint
 * sed
 * Linux bash shell
 
 ## Usage
-
-~~~~
-Usage:  validatecicsbundle -hv -f FILEPATTERN -x XPATH -e REGEX -r FILE DIRECTORY
-
 Validate the CICS bundle specified by DIRECTORY against a rule specified by the -f -x -e options
 and/or the rules specified in FILE. The script return code is set to 0 if all rules validate to
 true, otherwise it is set to > 0.
+
+~~~~
+Usage:  validatecicsbundle -hv -f FILEPATTERN -x XPATH -e REGEX -r FILE DIRECTORY
 
 Options:
         -h, --help                      Help
@@ -60,3 +57,21 @@ Example rules file:
         # The JVMSERVER resource must not be present
         cics.xml boolean(//*[local-name()='define'][@type="http://www.ibm.com/xmlns/prod/cics/bundle/JVMSERVER"]) false
 ~~~~
+
+# tagcicsbundle
+Script to tag files in a CICS bundle with their file encoding based on the file extension. The file tag is used by some file editors in ISPF to automatically convert files to and from non-native EBCDIC code pages to browse and edit files.
+ 
+## Requirements
+* chtag available on z/OS 
+ 
+## Usage
+ 
+~~~~
+Usage:	tagcicsbundle [-hv] DIRECTORY
+
+Options:
+	-h, --help		Help
+	-v, --verbose	Verbose messages
+	DIRECTORY is the CICS bundle directory
+~~~~
+	
