@@ -1,0 +1,146 @@
+#!/bin/bash
+#############################################################################################
+# Script to add CICS bundles into IBM UrbanCode Deploy as a component version.
+#
+# Requirements:
+# xmllint - available from http://xmlsoft.org/xmllint.html
+# udclient - download from UCD web UI > Help > IBM UrbanCode Deploy Client
+#
+# Author Mark Cocker
+# Licensed Materials - Property of IBM.
+# (c) Copyright IBM Corporation 2017. All Rights Reserved.
+# US Government Users Restricted Rights
+# Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corporation
+#############################################################################################
+
+# Configure access to UCD.
+# Environment variables documented at https://www.ibm.com/support/knowledgecenter/SS4GSP_6.2.2/com.ibm.udeploy.reference.doc/topics/cli_command_format.html
+#
+# udclient requires JAVA_HOME to be set
+# export JAVA_HOME=/usr
+#
+# PATH needs to include udclient
+# export PATH=$PATH:~/Downloads/udclient
+#
+# DS_WEB_URL is the UCD web UI
+# export DS_WEB_URL=https://ucdhostname:ucdhostport
+#
+# DS_AUTH_TOKEN can be recreated at UCD web UI > Settings > Security > Tokens > Create Token
+# export DS_AUTH_TOKEN=********-****-****-****-************
+
+show_usage () {
+	echo -e "Usage:\t"$(basename "$0") "[-hr] [-n COMPONENT_NAME] [-v COMPONENT_VERSION_NAME] DIRECTORY"
+}
+
+show_help () {
+	show_usage
+	echo
+	echo "Push a CICS bundle into IBM UrbanCode Deploy as a component version."
+	echo
+	echo "Options:"
+	echo -e "\t-h, --help\tHelp"
+	echo -e "\t-n, --name\tComponent name"
+	echo -e "\t\t\tIf not specified, the CICS bundle ID of the first bundle found is used."
+	echo -e "\t-v, --version\tComponent version name"
+	echo -e "\t\t\tIf not specified, the CICS bundle version of the first bundle found is used."
+	echo -e "\t-r, --replace\tReplace the existing component version if it exists"
+	echo
+	echo -e "\tDIRECTORY is the output directory created by the CICS build toolkit to be pushed."
+	echo -e "\t\tIt is expected to have a bundles subdirectory."
+}
+
+addCICSBundleToUCD () {
+	COMPONENTNAME=$1
+	COMPONENTVERSIONNAME=$2
+	COMPONENTREPLACE=$3
+	DIRECTORY=$4
+
+	# Validate directory is a CICS bundle
+	if [[ -z "${DIRECTORY}" ]] ; then
+		echo "DIRECTORY was not specified"
+		show_usage
+		exit 1
+	elif [[ ! -d "${DIRECTORY}" ]] ; then
+		echo "${DIRECTORY} is not a directory"
+		show_usage
+		exit 1
+	fi
+
+	# Find the cics.xml file in the first bundle within DIRECTORY
+	FIRSTBUNDLEFOUND=$(find $DIRECTORY -type f -name 'cics.xml' | head -n 1)
+
+	if [[ -z "${FIRSTBUNDLEFOUND}" ]] ; then
+		echo "Failed to find any cics.xml within directory ${DIRECTORY}"
+		exit 12
+	fi
+	
+	if [[ -z "${COMPONENTNAME}" ]] ; then
+		COMPONENTNAME=$(xmllint --xpath "string(//@id)" $FIRSTBUNDLEFOUND)
+	fi
+
+	if [[ -z "${COMPONENTVERSIONNAME}" ]] ; then
+		MAJORVERSIONNAME=$(xmllint --xpath "string(//@bundleMajorVer)" $FIRSTBUNDLEFOUND)
+		MINORVERSIONNAME=$(xmllint --xpath "string(//@bundleMinorVer)" $FIRSTBUNDLEFOUND)
+		MICROVERSIONNAME=$(xmllint --xpath "string(//@bundleMicroVer)" $FIRSTBUNDLEFOUND)
+		COMPONENTVERSIONNAME="$MAJORVERSIONNAME.$MINORVERSIONNAME.$MICROVERSIONNAME"
+	fi
+
+	if [[ "${COMPONENTREPLACE}" -eq "1" ]]; then
+		echo "Removing existing component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
+		udclient deleteVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSIONNAME}" -version "${COMPONENTVERSIONNAME}" -verbose
+		if [[ $RC -gt 0 ]] ; then
+			echo "Failed with RC = $RC"
+		fi
+	fi
+
+	echo "Creating component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
+	udclient createVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSIONNAME}" -verbose
+	RC=$?
+	if [[ $RC -gt 0 ]] ; then
+		echo "Failed with RC = $RC"
+		exit $RC
+	fi
+
+	echo "Copying files into component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
+	udclient addVersionFiles -component "${COMPONENTNAME}" -version "${COMPONENTVERSIONNAME}" -base "${DIRECTORY}" -verbose
+}
+
+# Process script long options by transforming them to the short option equivalent
+for arg in "$@" ; do
+  	shift
+  	case "$arg" in
+		"--name")
+			set -- "$@" "-n" ;;
+		"--version")
+			set -- "$@" "-v" ;;
+		"--replace")
+			set -- "$@" "-r" ;;
+	    	"--help")
+	    		set -- "$@" "-h" ;;
+    		*)
+	  	    set -- "$@" "$arg"
+	esac
+done
+
+# Process script short options
+while getopts ":n:v:rh" opt ; do
+	case "$opt" in
+		n)
+			NAME=${OPTARG} ;;
+		v)
+			VERSION=${OPTARG} ;;
+		r)
+			REPLACE=1 ;;
+		h)
+			show_help
+			exit 0 ;;
+	esac
+done
+shift $((OPTIND-1))
+
+# The remainder of the command line is the CICS bundle directory
+DIRECTORY=$@
+
+addCICSBundleToUCD "${NAME}" "${VERSION}" "${REPLACE}" "${DIRECTORY}"
+
+exit 0
