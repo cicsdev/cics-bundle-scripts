@@ -35,15 +35,16 @@ show_usage () {
 show_help () {
 	show_usage
 	echo
-	echo "Push a CICS bundle into IBM UrbanCode Deploy as a component version."
+	echo "Push a CICS bundle into IBM UrbanCode Deploy (UCD) as a component version."
 	echo
 	echo "Options:"
 	echo -e "\t-h, --help\tHelp"
-	echo -e "\t-n, --name\tComponent name"
+	echo -e "\t-n, --name\tComponent name in UCD"
 	echo -e "\t\t\tIf not specified, the CICS bundle ID of the first bundle found is used."
-	echo -e "\t-v, --version\tComponent version name"
+	echo -e "\t-v, --version\tComponent version name in UCD"
 	echo -e "\t\t\tIf not specified, the CICS bundle version of the first bundle found is used."
-	echo -e "\t-r, --replace\tReplace the existing component version if it exists"
+	echo -e "\t-r, --replace\tDelete the existing component version in UCD if it exists"
+	echo -e "\t\t\tNote component versions cannot be deleted if they have been deployed."
 	echo
 	echo -e "\tDIRECTORY is the output directory created by the CICS build toolkit to be pushed."
 	echo -e "\t\tIt is expected to have a bundles subdirectory."
@@ -88,6 +89,7 @@ addCICSBundleToUCD () {
 	if [[ "${COMPONENTREPLACE}" -eq "1" ]]; then
 		echo "Removing existing component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
 		udclient deleteVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSIONNAME}" -version "${COMPONENTVERSIONNAME}" -verbose
+		RC=$?
 		if [[ $RC -gt 0 ]] ; then
 			echo "Failed with RC = $RC"
 		fi
@@ -103,6 +105,11 @@ addCICSBundleToUCD () {
 
 	echo "Copying files into component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
 	udclient addVersionFiles -component "${COMPONENTNAME}" -version "${COMPONENTVERSIONNAME}" -base "${DIRECTORY}" -verbose
+	RC=$?
+	if [[ $RC -gt 0 ]] ; then
+		echo "Failed with RC = $RC"
+		exit $RC
+	fi
 }
 
 # Process script long options by transforming them to the short option equivalent
