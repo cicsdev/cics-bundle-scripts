@@ -29,7 +29,7 @@
 # export DS_AUTH_TOKEN=********-****-****-****-************
 
 show_usage () {
-	echo -e "Usage:\t"$(basename "$0") "[-hr] [-n COMPONENT_NAME] [-v COMPONENT_VERSION_NAME] DIRECTORY"
+	echo -e "Usage:\t"$(basename "$0") "[-hr] [-n COMPONENT_NAME] [-v COMPONENT_VERSION_NAME] [-q VERSION_QUALIFIER] DIRECTORY"
 }
 
 show_help () {
@@ -43,6 +43,7 @@ show_help () {
 	echo -e "\t\t\tIf unspecified the CICS bundle ID of the first bundle found is used."
 	echo -e "\t-v, --version\tComponent version name in UCD"
 	echo -e "\t\t\tIf unspecified the CICS bundle version of the first bundle found is used."
+	echo -e "\t-q, --qualifier\tComponent version qualifie"
 	echo -e "\t-r, --replace\tDelete the existing component version in UCD if it exists"
 	echo -e "\t\t\tComponent versions cannot be deleted if they have been deployed."
 	echo
@@ -52,8 +53,9 @@ show_help () {
 addCICSBundleToUCD () {
 	COMPONENTNAME=$1
 	COMPONENTVERSIONNAME=$2
-	COMPONENTREPLACE=$3
-	DIRECTORY=$4
+	COMPONENTVERSIONQUALIFIER=$3
+	COMPONENTREPLACE=$4
+	DIRECTORY=$5
 
 	# Validate directory is a CICS bundle
 	if [[ -z "${DIRECTORY}" ]] ; then
@@ -84,26 +86,46 @@ addCICSBundleToUCD () {
 		MICROVERSIONNAME=$(xmllint --xpath "string(//@bundleMicroVer)" $FIRSTBUNDLEFOUND)
 		COMPONENTVERSIONNAME="$MAJORVERSIONNAME.$MINORVERSIONNAME.$MICROVERSIONNAME"
 	fi
+	
+	COMPONENTVERSION="${COMPONENTVERSIONNAME}${COMPONENTVERSIONQUALIFIER}"
 
 	if [[ "${COMPONENTREPLACE}" -eq "1" ]]; then
-		echo "Removing existing component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
-		udclient deleteVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSIONNAME}" -version "${COMPONENTVERSIONNAME}" -verbose
+		echo "Removing existing component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
+		udclient deleteVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSION}" -version "${COMPONENTVERSION}" -verbose
 		RC=$?
 		if [[ $RC -gt 0 ]] ; then
 			echo "Failed with RC = $RC"
 		fi
 	fi
 
-	echo "Creating component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
-	udclient createVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSIONNAME}" -verbose
+	echo "Creating component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
+	udclient createVersion -component "${COMPONENTNAME}" -name "${COMPONENTVERSION}" -verbose
 	RC=$?
 	if [[ $RC -gt 0 ]] ; then
 		echo "Failed with RC = $RC"
 		exit $RC
 	fi
+	
+	echo "Adding component version property cics.bundle.version into component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
+	udclient setVersionProperty -component "${COMPONENTNAME}" -version "${COMPONENTVERSION}" -name "cics.bundle.version" -value "${COMPONENTVERSIONNAME}" -verbose
+	RC=$?
+	if [[ $RC -gt 0 ]] ; then
+		echo "Failed with RC = $RC"
+		exit $RC
+	fi
+	
+	if [[ ! -z "${COMPONENTVERSIONQUALIFIER}" ]] ; then
+		echo "Adding component version property cics.bundle.qualifier into component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
+		udclient setVersionProperty -component "${COMPONENTNAME}" -version "${COMPONENTVERSION}" -name "cics.bundle.qualifier" -value "${COMPONENTVERSIONQUALIFIER}" -verbose
+		RC=$?
+		if [[ $RC -gt 0 ]] ; then
+			echo "Failed with RC = $RC"
+			exit $RC
+		fi
+	fi
 
-	echo "Copying files into component ${COMPONENTNAME} version ${COMPONENTVERSIONNAME} in UCD server ${DS_WEB_URL}"
-	udclient addVersionFiles -component "${COMPONENTNAME}" -version "${COMPONENTVERSIONNAME}" -base "${DIRECTORY}" -verbose
+	echo "Copying files into component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
+	udclient addVersionFiles -component "${COMPONENTNAME}" -version "${COMPONENTVERSION}" -base "${DIRECTORY}" -verbose
 	RC=$?
 	if [[ $RC -gt 0 ]] ; then
 		echo "Failed with RC = $RC"
@@ -119,6 +141,8 @@ for arg in "$@" ; do
 			set -- "$@" "-n" ;;
 		"--version")
 			set -- "$@" "-v" ;;
+		"--qualifier")
+			set -- "$@" "-q" ;;
 		"--replace")
 			set -- "$@" "-r" ;;
 	    	"--help")
@@ -135,6 +159,8 @@ while getopts ":n:v:rh" opt ; do
 			NAME=${OPTARG} ;;
 		v)
 			VERSION=${OPTARG} ;;
+		q)
+			QUALIFIER=${OPTARG} ;;
 		r)
 			REPLACE=1 ;;
 		h)
@@ -147,6 +173,6 @@ shift $((OPTIND-1))
 # The remainder of the command line is the CICS bundle directory
 DIRECTORY=$@
 
-addCICSBundleToUCD "${NAME}" "${VERSION}" "${REPLACE}" "${DIRECTORY}"
+addCICSBundleToUCD "${NAME}" "${VERSION}" "${QUALIFIER}" "${REPLACE}" "${DIRECTORY}"
 
 exit 0
