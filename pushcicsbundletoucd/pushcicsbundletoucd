@@ -25,7 +25,7 @@
 # DS_WEB_URL is the UCD web UI
 # export DS_WEB_URL=https://ucdhostname:ucdhostport
 #
-# DS_AUTH_TOKEN can be recreated at UCD web UI > Settings > Security > Tokens > Create Token
+# DS_AUTH_TOKEN can be created using the UCD web UI > Settings > Security > Tokens > Create Token
 # export DS_AUTH_TOKEN=********-****-****-****-************
 
 show_usage () {
