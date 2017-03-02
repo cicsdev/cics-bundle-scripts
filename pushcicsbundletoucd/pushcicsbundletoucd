@@ -153,7 +153,7 @@ for arg in "$@" ; do
 done
 
 # Process script short options
-while getopts ":n:v:rh" opt ; do
+while getopts ":n:v:q:rh" opt ; do
 	case "$opt" in
 		n)
 			NAME=${OPTARG} ;;
