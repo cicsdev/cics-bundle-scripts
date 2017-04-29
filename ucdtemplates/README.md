@@ -7,15 +7,15 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
 * **Undeploy and delete** - Disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS.
 
 ## Requirements
-* CICS Transaction Server version 5.1 or later
-* CICS build toolkit version 5.3.0 or later installed on zFS
-* IBM UrbanCode Deploy version 6.2.3 or later
-* IBM CICS TS plug-in for UCD version 38 or later
+* CICS Transaction Server version 5.1 or later.
+* CICS build toolkit version 5.3.0 or later installed on zFS.
+* IBM UrbanCode Deploy version 6.2.3 or later.
+* IBM CICS TS plug-in for UCD version 38 or later.
 
 ## Installation
-1. Install and configure requirements, including CICS resources in UCD
-1. Download CICS+bundle.json from GitHub
-1. Import CICS+bundle.json into UCD
+1. Install and configure the requirements above.
+1. Download CICS+bundle.json from this GitHub directory.
+1. Import CICS+bundle.json into UCD.
    1. **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
   
 ## Usage
@@ -46,4 +46,5 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
    1. Component: select the CICS bundle component 
    1. Component Process: select Deploy (Template)
    1. **OK** > **Save**
+1. Configure your build process to build the CICS bundle from the Eclipse source projects and push it into UCD as a version of the CICS bundle component. For example, see the [pushcicsbundletoucd](https://github.com/cicsdev/cics-bundle-scripts/tree/master/pushcicsbundletoucd) script.
 1. Deploy the application.
