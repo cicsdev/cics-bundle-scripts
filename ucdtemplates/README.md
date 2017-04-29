@@ -4,7 +4,7 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
 * **Disable** - Disables the BUNDLE resource in CICS
 * **Enable** - Enables the BUNDLE resource in CICS
 * **Undeploy** - Disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS
-* **Undeploy and delete** - Disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then removes the bundle from zFS
+* **Undeploy and delete** - Disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS
 
 ## Requirements
 * CICS Transaction Server version 5.1 or later
@@ -14,26 +14,25 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
 
 ## Installation
 1. Install and configure requirements, including CICS resources in UCD
-1. Download CICS+bundle.json
+1. Download CICS+bundle.json from GitHub
 1. Import CICS+bundle.json into UCD
-   1. Components > Template > Import Template > select "Upgrade Template" > Browse > select CICS+bundle.json > Submit
+   1. **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
   
 ## Usage
-1. Set the property cicsbt.directory to the zFS directory where it is installed.
-   1. This would typically be set in Resources below the agent, for example in the configuration of a CICSplex resource group.
-1. Create a component for each CICS bundle
-   1. **Components** > **Create Component** > and complete the details, including:
+1. Set the property cicsbt.directory to the zFS directory where the CICS build toolkit is installed. This would typically be set in the resources below the agent, for example in a resource group for the CICSplex.
+1. Create a component for each CICS bundle.
+   1. **Components** > **Create Component** > complete the dialog, including:
       1. Component Template: CICS bundle
       1. cics.bundle.version: 1.0.0
-      1. cics.bundle.definition.name: <BUNDLE resource name in CICS> 
-      1. cics.bundle.definition.group.name: <CSD group name in CICS>
-      1. Optionally, cics.bundle.properties: <properties to use when resolving the bundle>
-   1. Save
-1. Create an application to deploy the CICS bundle
-   1. **Applications** > **Create Application**
+      1. cics.bundle.definition.name: BUNDLE resource name in CICS 
+      1. cics.bundle.definition.group.name: CSD group name in CICS
+      1. cics.bundle.properties: properties to use when resolving the bundle. This is optional.
+   1. **Save**
+1. Create an application to deploy the CICS bundle.
+   1. **Applications** > **Create Application** > complete the dialog
 1. Add the component to the application
-   1. **Applications** > application > **Components** > **Add Component** > select a Component > **Save**
-1. Create an environment
+   1. **Applications** > application > **Components** > **Add Component** > Select a Component: select the CICS bundle component > **Save**
+1. Create an environment.
    1. **Applications** > select application > **Environments** > **Create Environment**
    1. Select the environment > **Add Base Resources** > select CICS resources to deploy the application to 
    1. **Configuration** > **Environment Properties** > set properties:
@@ -47,4 +46,4 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
    1. Component: select the CICS bundle component 
    1. Component Process: select Deploy (Template)
    1. **OK** > **Save**
-1. Deploy the application
+1. Deploy the application.
