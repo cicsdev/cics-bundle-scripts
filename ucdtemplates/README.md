@@ -25,31 +25,31 @@ The CICS bundle template for UrbanCode Deploy (UCD) provides the following proce
   
 ## Usage
 1. Set the property cicsbt.directory to the zFS directory where it is installed.
-  1. This would typically be set in Resources below the agent, for example in the configuration of a CICSplex resource group.
+   1. This would typically be set in Resources below the agent, for example in the configuration of a CICSplex resource group.
 1. Create a component for each CICS bundle
-  1. Components > Create Component > and complete the details, including:
-    1. Component Template: CICS bundle
-    1. cics.bundle.version: 1.0.0
-    1. cics.bundle.definition.name: <BUNDLE resource name in CICS> 
-    1. cics.bundle.definition.group.name: <CSD group name in CICS>
-    1. Optionally, cics.bundle.properties: <properties to use when resolving the bundle>
-  1. Save
+   1. Components > Create Component > and complete the details, including:
+      1. Component Template: CICS bundle
+      1. cics.bundle.version: 1.0.0
+      1. cics.bundle.definition.name: <BUNDLE resource name in CICS> 
+      1. cics.bundle.definition.group.name: <CSD group name in CICS>
+      1. Optionally, cics.bundle.properties: <properties to use when resolving the bundle>
+   1. Save
 1. Create an application to deploy the CICS bundle
-  1. Applications > Create Application
+   1. Applications > Create Application
 1. Add the component to the application
-  1. Applications > application > Components > Add Component > Select a Component > Save
+   1. Applications > application > Components > Add Component > Select a Component > Save
 1. Create an environment
-  1. Applications > application > Environments > Create Environment
-  1. Select the environment > Add Base Resources > select CICS resources to deploy the application to 
-  1. Configuration > Environment Properties > set properties:
-    1. cics.platform.home to the CICS platform home zFS directory where the CICS bundle will be deployed to
-    1. Optionally, cics.platform.properties to the properties used when resolving all bundles in this environment
-  1. Save
+   1. Applications > application > Environments > Create Environment
+   1. Select the environment > Add Base Resources > select CICS resources to deploy the application to 
+   1. Configuration > Environment Properties > set properties:
+      1. cics.platform.home to the CICS platform home zFS directory where the CICS bundle will be deployed to
+      1. Optionally, cics.platform.properties to the properties used when resolving all bundles in this environment
+   1. Save
 1. Create the application processes, such as to deploy and undeploy the application, eg:
-  1. Applications > application > Processes > Create Process > Name: Deploy application > Save
-  1. Edit the process
-  1. Drag "Install Component" from the Application Steps onto the process editor, and edit its properties.
-  1. Component: select the CICS bundle component 
-  1. Component Process: select Deploy (Template)
-  1. OK > Save
+   1. Applications > application > Processes > Create Process > Name: Deploy application > Save
+   1. Edit the process
+   1. Drag "Install Component" from the Application Steps onto the process editor, and edit its properties.
+   1. Component: select the CICS bundle component 
+   1. Component Process: select Deploy (Template)
+   1. OK > Save
 1. Deploy the application
