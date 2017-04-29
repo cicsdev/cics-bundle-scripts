@@ -43,7 +43,7 @@ show_help () {
 	echo -e "\t\t\tIf unspecified the CICS bundle ID of the first bundle found is used."
 	echo -e "\t-v, --version\tComponent version name in UCD"
 	echo -e "\t\t\tIf unspecified the CICS bundle version of the first bundle found is used."
-	echo -e "\t-q, --qualifier\tComponent version qualifie"
+	echo -e "\t-q, --qualifier\tComponent version qualifier"
 	echo -e "\t-r, --replace\tDelete the existing component version in UCD if it exists"
 	echo -e "\t\t\tComponent versions cannot be deleted if they have been deployed."
 	echo
@@ -114,16 +114,6 @@ addCICSBundleToUCD () {
 		exit $RC
 	fi
 	
-	if [[ ! -z "${COMPONENTVERSIONQUALIFIER}" ]] ; then
-		echo "Adding component version property cics.bundle.qualifier into component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
-		udclient setVersionProperty -component "${COMPONENTNAME}" -version "${COMPONENTVERSION}" -name "cics.bundle.qualifier" -value "${COMPONENTVERSIONQUALIFIER}" -verbose
-		RC=$?
-		if [[ $RC -gt 0 ]] ; then
-			echo "Failed with RC = $RC"
-			exit $RC
-		fi
-	fi
-
 	echo "Copying files into component ${COMPONENTNAME} version ${COMPONENTVERSION} in UCD server ${DS_WEB_URL}"
 	udclient addVersionFiles -component "${COMPONENTNAME}" -version "${COMPONENTVERSION}" -base "${DIRECTORY}" -verbose
 	RC=$?
