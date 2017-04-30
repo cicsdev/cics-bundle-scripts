@@ -10,15 +10,14 @@ The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the f
 
 ## Requirements
 
-* [CICS Transaction Server version](https://www.ibm.com/ms-en/marketplace/cics-transaction-server) 5.1 or later.
-* [CICS build toolkit version](http://www.ibm.com/support/docview.wss?uid=swg24041185) 5.3.0 or later installed on zFS.
+* [CICS Transaction Server](https://www.ibm.com/ms-en/marketplace/cics-transaction-server) version 5.1 or later.
+* [CICS build toolkit](http://www.ibm.com/support/docview.wss?uid=swg24041185) version 5.3.0 or later installed on zFS.
 * [IBM UrbanCode Deploy](https://developer.ibm.com/urbancode/products/urbancode-deploy/) version 6.2.3 or later.
-* [IBM CICS TS plug-in for UCD version](https://developer.ibm.com/urbancode/plugin/cics-ts/) 38 or later.
+* [IBM CICS TS plug-in for UCD](https://developer.ibm.com/urbancode/plugin/cics-ts/) version 38 or later.
 
 ## Installation
 
-1. Download [CICS+bundle.json](CICS+bundle.json) from this GitHub directory.
-1. Import CICS+bundle.json into UCD.
+1. Import [CICS+bundle.json](CICS+bundle.json) into UCD.
    1. **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
 1. Set the property cicsbt.directory to the zFS directory where the CICS build toolkit is installed. This would typically be set in the resources below the agent, for example in a resource group for the CICSplex. The template Deploy process calls the CICS build toolkit to resolve variables in the CICS bundle.
   
