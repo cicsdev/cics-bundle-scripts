@@ -1,6 +1,6 @@
 # CICS bundle
 
-The CICS bundle template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy and undeploy bundles from CICS:
+The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy and undeploy bundles from CICS:
 
 * `Deploy` - Resolves variables in the new version of the bundle, undeploys the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
 * `Disable` - Disables the BUNDLE resource in CICS.
@@ -54,3 +54,5 @@ The CICS bundle template for IBM UrbanCode Deploy (UCD) provides the following p
 1. Deploy the application.
 
 ## Reference
+
+* [`Creating Applications Based on Templates - UrbanCode Deploy v.6.2`](https://developer.ibm.com/urbancode/videos/creating-applications-based-on-templates-urbancode-deploy-v-6-2/)
