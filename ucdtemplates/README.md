@@ -54,4 +54,4 @@ The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the f
 
 ## Reference
 
-* [`Creating Applications Based on Templates - UrbanCode Deploy v.6.2`](https://developer.ibm.com/urbancode/videos/creating-applications-based-on-templates-urbancode-deploy-v-6-2/)
+* [Creating Applications Based on Templates - UrbanCode Deploy v.6.2](https://developer.ibm.com/urbancode/videos/creating-applications-based-on-templates-urbancode-deploy-v-6-2/)

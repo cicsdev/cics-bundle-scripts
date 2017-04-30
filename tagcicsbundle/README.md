@@ -10,7 +10,8 @@ Script to tag files in a CICS bundle with their file encoding based on the file 
 tagcicsbundle [-hv] DIRECTORY
 
 Options:
-	-h, --help		Help
-	-v, --verbose	Verbose messages
-	DIRECTORY is the CICS bundle directory
+-h, --help     Help
+-v, --verbose  Verbose messages
+
+DIRECTORY is the CICS bundle directory
 ~~~~
