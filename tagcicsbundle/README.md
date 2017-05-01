@@ -1,7 +1,9 @@
 # tagcicsbundle
-Script to tag files in a CICS bundle with their file encoding based on the file extension. The file tag is used by some file editors in ISPF to automatically convert files to and from non-native EBCDIC code pages to browse and edit files.
+
+Script to run on z/OS to tag files in a CICS bundle with their file encoding based on the file extension. The file tag is used by some file editors in ISPF to automatically convert files to and from non-native EBCDIC code pages to browse and edit files. This can make it easier to view CICS bundles when diagnosing issues.
  
 ## Requirements
+
 * chtag available on z/OS 
  
 ## Usage
@@ -10,8 +12,9 @@ Script to tag files in a CICS bundle with their file encoding based on the file 
 tagcicsbundle [-hv] DIRECTORY
 
 Options:
+
 -h, --help     Help
 -v, --verbose  Verbose messages
 
-DIRECTORY is the CICS bundle directory
+DIRECTORY is the CICS bundle directory.
 ~~~~
