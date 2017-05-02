@@ -36,11 +36,14 @@ DIRECTORY is the output directory created by the CICS build toolkit to be pushed
     **File** > **Export..** > **File System** > select the project > To directory: `/build/input` > **Finish**
 
 1. Build the CICS bundle using the CICS build toolkit.
+
     `cicsbt --input /build/input/* --build com.example.server --output /build/output`
 
 1. Push the CICS bundle into UCD as a component version.
+
     `pushcicsbundletoucd ./build/output`
 
     Alternateively, to append a time stamp to the name of the component version.
-    ```pushcicsbundletoucd -q "-"`date +%Y-%m-%d-%H:%M:%S` ./build/output` ```
+    
+    `pushcicsbundletoucd -q "-"`date +%Y-%m-%d-%H:%M:%S` ./build/output` `
 

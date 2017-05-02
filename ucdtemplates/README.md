@@ -2,24 +2,26 @@
 
 The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy and undeploy bundles from CICS:
 
-* Deploy - Resolves variables in the new version of the bundle, undeploys the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
-* Disable - Disables the BUNDLE resource in CICS.
-* Enable - Enables the BUNDLE resource in CICS.
-* Undeploy - Disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS.
-* Undeploy and delete - Disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS.
+* **Deploy** resolves variables in the new version of the bundle, undeploys the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
+* **Disable** disables the BUNDLE resource in CICS. CICS will disable each bundle part. This process may complete before the BUNDLE resource has fully disabled.
+* **Enable** enables the BUNDLE resource in CICS. CICS will attempt enable each bundle part. This process may complete before the BUNDLE resource has fully enabled.
+* **Undeploy** disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS.
+* **Undeploy and delete** disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS.
 
 ## Requirements
 
-* [CICS Transaction Server](https://www.ibm.com/ms-en/marketplace/cics-transaction-server) version 5.1 or later.
-* [CICS build toolkit](http://www.ibm.com/support/docview.wss?uid=swg24041185) version 5.3.0 or later installed on zFS.
-* [IBM UrbanCode Deploy](https://developer.ibm.com/urbancode/products/urbancode-deploy/) version 6.2.3 or later.
-* [IBM CICS TS plug-in for UCD](https://developer.ibm.com/urbancode/plugin/cics-ts/) version 38 or later.
+* [IBM UrbanCode Deploy](https://developer.ibm.com/urbancode/products/urbancode-deploy/) version 6.2.3 or later. Used to store the CICS bundle as a component version, and to coordinate the deployment of the CICS bundle to CICS.
+* [IBM CICS TS plug-in for UCD](https://developer.ibm.com/urbancode/plugin/cics-ts/) version 38 or later. Provides the process steps to deploy, undeploy, enable, and disable a CICS bundle.
+* [CICS build toolkit](http://www.ibm.com/support/docview.wss?uid=swg24041185) version 5.3.0 or later installed on zFS. Used by the Deploy templte process to resolve variables in the CICS bundle.
+* [CICS Transaction Server](https://www.ibm.com/ms-en/marketplace/cics-transaction-server) version 5.1 or later. Used to host the CICS bundle.
 
 ## Installation
 
-1. Import [CICS+bundle.json](CICS+bundle.json) into UCD.
-   1. **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
-1. Set the property cicsbt.directory to the zFS directory where the CICS build toolkit is installed. This would typically be set in the resources below the agent, for example in a resource group for the CICSplex. The template Deploy process calls the CICS build toolkit to resolve variables in the CICS bundle.
+1. Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
+
+    **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
+
+1. Set the property cicsbt.directory to the zFS directory where the CICS build toolkit is installed. This would typically be set in a resource below the agent, for example in a resource group for the CICSplex.
   
 ## Usage
 
