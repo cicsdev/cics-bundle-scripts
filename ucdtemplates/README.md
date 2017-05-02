@@ -38,7 +38,7 @@ Property | Description | Example | Required | Where to set
 --- | --- | --- | --- | ---
 cics.bundle.definition.group.name | CICS CSD group name | MYGROUP  | Yes | Component
 cics.bundle.definition.name | The name of the BUNDLE resource in CICS. | MYBUNDLE | Yes | Component
-cics.bundle.properties | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFH$WLP | Optional | Component
+cics.bundle.properties | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFHWLP | Optional | Component
 cics.bundle.version | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0 | Yes | Component version
 cics.platform.home | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | CICSplex resource
 cics.platform.properties| Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | | Optional | CICSplex resource
