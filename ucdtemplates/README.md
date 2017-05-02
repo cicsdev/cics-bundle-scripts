@@ -42,12 +42,12 @@ cics.bundle.properties | Properties used to resolve variables in the CICS bundle
 cics.bundle.version | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0 | Yes | Component version
 cics.platform.home | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | CICSplex resource
 cics.platform.properties| Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | | Optional | CICSplex resource
-cicsbt.directory | The zFS directory where the CICS build toolkit is installed. This would typically be set in a resource below the agent, for example in a resource group for the CICSplex. | /usr/lpp/cicsbt | Yes | CICSplex resource
+cicsbt.directory | The zFS directory where the CICS build toolkit is installed. | /usr/lpp/cicsbt | Yes | CICSplex resource
 
 ## Example
 
 1. Create a component for the CICS bundle.
-    1. **Components** > **Create Component** > complete the dialog, including:
+    1. In the UCD web user interface: **Components** > **Create Component** > complete the dialog, including:
         1. Component Template: `CICS bundle`
         1. Component Type: `Standard`
         1. cics.bundle.definition.group.name: `MYGROUP`
@@ -55,24 +55,24 @@ cicsbt.directory | The zFS directory where the CICS build toolkit is installed. 
         1. cics.bundle.version: `1.0.0`
     1. **Save**
 1. Create an application to deploy the CICS bundle.
-    * **Applications** > **Create Application** > complete the dialog
+    * **Applications** > **Create Application** > complete the dialog.
 1. Add the component to the application.
     * **Applications** > select application > **Components** > **Add Component** > Select a Component: select the CICS bundle component > **Save**
 1. Create an environment.
     1. **Applications** > select application > **Environments** > **Create Environment**
-    1. Select the environment > **Add Base Resources** > select CICS resources to deploy the application to 
-    1. **Configuration** > **Environment Properties** > set properties:
+    1. Select the environment > **Add Base Resources** > select the CICS resources to deploy the application to.
+    1. **Configuration** > **Environment Properties** > set the following properties:
         1. cics.platform.home to the CICS platform home zFS directory where the CICS bundle will be deployed to
         1. cics.platform.properties to the properties used when resolving all bundles in this environment. This is optional.
     1. **Save**
 1. Create the application processes, such as to deploy and undeploy the application. For example:
     1. **Applications** > select application > **Processes** > **Create Process** > Name: Deploy application > **Save**
     1. Edit the process
-    1. Drag "Install Component" from the Application Steps onto the process editor, and edit the step properties.
-    1. Component: select the CICS bundle component 
-    1. Component Process: Deploy (Template)
-    1. **OK** > **Save**
-1. Configure your build process to build the CICS bundle from the Eclipse source projects and push it into UCD as a version of the CICS bundle component. For example, see the [pushcicsbundletoucd](https://github.com/cicsdev/cics-bundle-scripts/tree/master/pushcicsbundletoucd) script.
+    1. Drag **Install Component** from the Application Steps onto the process editor, and edit the step properties.
+        1. Component: select the CICS bundle component 
+        1. Component Process: Deploy (Template)
+        1. **OK** > **Save**
+1. Configure your build process to build the CICS bundle from the Eclipse source projects using the CICS build toolkit, then to push the built output into UCD as a version of the CICS bundle component. For example, see the [pushcicsbundletoucd](https://github.com/cicsdev/cics-bundle-scripts/tree/master/pushcicsbundletoucd) script.
 1. Deploy the application.
 
 ## References
