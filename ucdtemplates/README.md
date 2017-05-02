@@ -34,7 +34,7 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 
 1. Set the following properties:
 
-    Property | Description | Example | Required | Where to set
+Property | Description | Example | Required | Where to set
 --- | --- | --- | --- | ---
 cics.bundle.definition.group.name | CICS CSD group name | MYGROUP  | Yes | Component
 cics.bundle.definition.name | The name of the BUNDLE resource in CICS. | MYBUNDLE | Yes | Component
