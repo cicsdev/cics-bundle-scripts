@@ -2,13 +2,15 @@
 
 The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy bundles to CICS:
 
-* **Deploy** resolves variables in the new version of the bundle, undeploys the old version of the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
-* **Undeploy** disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS.
-* **Undeploy and delete** disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS.
-* **Enable** enables the BUNDLE resource in CICS.
+* **Deploy** resolves variables in bundle, undeploys the old version of the BUNDLE resource in CICS, copies the bundle to the CICS platform home, then deploys the BUNDLE resource in CICS.
 * **Disable** disables the BUNDLE resource in CICS.
+* **Enable** enables the BUNDLE resource in CICS.
+* **Make available** makes the BUNDLE resource in CICS available.
+* **Make unavailable** makes the BUNDLE resource in CICS unavailable.
+* **Undeploy** undeploys the BUNDLE resource in CICS.
+* **Undeploy and delete** undeploys the BUNDLE resource in CICS, then deletes the bundle from the CICS platform home.
 
-The processes assume the component contains only one CICS bundle.
+The processes assume the UCD component contains only one CICS bundle.
 
 The processes will wait up to 300 seconds for actions to complete in CICS.
 
@@ -36,7 +38,7 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 
 Property | Description | Example | Required | Where to set
 --- | --- | --- | --- | ---
-cics.bundle.definition.group.name | CICS CSD group name | MYGROUP  | Yes | Component
+cics.bundle.definition.group.name | CICS CSD group name. | MYGROUP  | Yes | Component
 cics.bundle.definition.name | The name of the BUNDLE resource in CICS. | MYBUNDLE | Yes | Component
 cics.bundle.properties | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFHWLP | Optional | Component
 cics.bundle.version | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0 | Yes | Component version
