@@ -2,7 +2,7 @@
     "securityResourceId": "1ba89413-b7a6-4b6a-874c-fb8edefedc1f",
     "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0",
     "name": "CICS bundle",
-    "description": "",
+    "description": "Component template for CICS bundles.",
     "ignoreQualifiers": 0,
     "componentType": "STANDARD",
     "tags": [],
@@ -426,35 +426,48 @@
                 "edges": [
                     {
                         "to": "00380f319ab62695680666b6eb1a7a",
-                        "from": "Disable resources",
+                        "from": "Check the bundle is disabled",
                         "type": "SUCCESS",
                         "value": ""
                     },
                     {
-                        "to": "Disable resources",
+                        "to": "Disable the bundle",
                         "type": "ALWAYS",
+                        "value": ""
+                    },
+                    {
+                        "to": "Check the bundle is disabled",
+                        "from": "Disable the bundle",
+                        "type": "SUCCESS",
                         "value": ""
                     }
                 ],
                 "offsets": [
                     {
-                        "name": "Disable resources",
+                        "name": "00380f319ab62695680666b6eb1a7a",
+                        "x": -5,
+                        "y": 415,
+                        "h": 80,
+                        "w": 120
+                    },
+                    {
+                        "name": "Disable the bundle",
                         "x": -75,
-                        "y": 180,
+                        "y": 145,
                         "h": 70,
                         "w": 260
                     },
                     {
-                        "name": "00380f319ab62695680666b6eb1a7a",
-                        "x": -5,
-                        "y": 350,
-                        "h": 80,
-                        "w": 120
+                        "name": "Check the bundle is disabled",
+                        "x": -125,
+                        "y": 280,
+                        "h": 70,
+                        "w": 360
                     }
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "bda1f6ff-f0d8-4d6b-b4e0-9bdc19c22038",
+                "name": "f8afcf07-ed55-40ed-ac6c-c5971181d648",
                 "children": [
                     {
                         "type": "finish",
@@ -477,17 +490,48 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|n9Mz1LkT7Z2rCfFL1n+njA==|cSYhuajfgQij\/3dPyae+emS6wMoAALHG1JqpiQ1UvSw=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|XQMELse0Xm\/S6mEOandZ3w==|smmhR\/\/EapiBTMn6gVZfSJ2il+ijohuzJgbPdtIqd7g=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|EVpyDOOcPCe00\/EMHjlIHA==|EPyKZEbmU6UCd\/0rEv9yn\/4Gc0wQV5A\/hLa9Xd5P5Fo=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|PHowZYkk\/AJQfr+8jwn9wA==|67mW1DN7+F5Z9O2KeS66uvXP71KSN4J0\/FpP9\/FG2Tc=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|I3vzMXOQyVueSiDwMoUvxw==|WHYSGbx2g\/loepnktQEz6MuQaYk8W0ChKOg38ASi6gQ=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|kxNAiw1EpveyqNhEXWZjSw==|\/\/sbgjHkBUWu4Y+Na+Apa9iUZ9nu+XgcW42oYs2L\/+0=}"
                         },
                         "type": "plugin",
-                        "name": "Disable resources",
+                        "name": "Disable the bundle",
+                        "children": []
+                    },
+                    {
+                        "allowFailure": false,
+                        "useImpersonation": false,
+                        "showHidden": false,
+                        "impersonationUseSudo": false,
+                        "commandName": "Check enable status of resources",
+                        "pluginName": "CICS TS",
+                        "pluginVersion": 38,
+                        "properties": {
+                            "resourceNameList": "${p:cics.bundle.definition.name}",
+                            "resourceType": "BUNDLE",
+                            "expectedStatus": "DISABLED",
+                            "timeout": "300",
+                            "hostname": "${p:cics.host}",
+                            "port": "${p:cics.cmciport}",
+                            "cicsplex": "${p?:cics.cicsplex}",
+                            "cicsscope": "${p?:cics.scope}",
+                            "username": "${p?:cics.username}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|0C0Pgsk8UAVwLDCFV+vRrA==|\/ucDpCnxTY\/ZtakKnFQalZ3o6vI9rkCQS+EsW7u57Z8=}",
+                            "ssl": "${p?:cics.ssl}",
+                            "ks_location": "${p?:cics.kslocation}",
+                            "ks_type": "${p?:cics.kstype}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|TJWN8vq2LPJHINVLzr5hdA==|ub+XXGtjVDBgUwNAsR9+0kbIujsSeOHMlC6biMyQnvM=}",
+                            "ts_location": "${p?:cics.tslocation}",
+                            "ts_type": "${p?:cics.tstype}",
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|k9+NM22UTNMluVW+U9qq6Q==|+tMCwCgBCZMGsa\/cYaLK4pwLX89Hlw0T1dozq4KTI3E=}"
+                        },
+                        "type": "plugin",
+                        "name": "Check the bundle is disabled",
                         "children": []
                     }
                 ]
@@ -505,36 +549,49 @@
             "rootActivity": {
                 "edges": [
                     {
-                        "to": "Enable resources",
+                        "to": "Enable the bundle",
                         "type": "ALWAYS",
                         "value": ""
                     },
                     {
+                        "to": "Check enable bundle is enabled",
+                        "from": "Enable the bundle",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
                         "to": "fbcd1225f5667bd471075aca93b560",
-                        "from": "Enable resources",
+                        "from": "Check enable bundle is enabled",
                         "type": "SUCCESS",
                         "value": ""
                     }
                 ],
                 "offsets": [
                     {
-                        "name": "Enable resources",
+                        "name": "fbcd1225f5667bd471075aca93b560",
+                        "x": -5,
+                        "y": 415,
+                        "h": 80,
+                        "w": 120
+                    },
+                    {
+                        "name": "Enable the bundle",
                         "x": -70,
-                        "y": 180,
+                        "y": 145,
                         "h": 70,
                         "w": 250
                     },
                     {
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "x": -5,
-                        "y": 350,
-                        "h": 80,
-                        "w": 120
+                        "name": "Check enable bundle is enabled",
+                        "x": -125,
+                        "y": 280,
+                        "h": 70,
+                        "w": 360
                     }
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "7035f529-28b6-48f4-82bc-39ec3d34bcc0",
+                "name": "68e678e9-6ade-41bd-b877-c4e2c1d01983",
                 "children": [
                     {
                         "type": "finish",
@@ -544,7 +601,7 @@
                     {
                         "allowFailure": false,
                         "useImpersonation": false,
-                        "showHidden": true,
+                        "showHidden": false,
                         "impersonationUseSudo": false,
                         "commandName": "Enable resources",
                         "pluginName": "CICS TS",
@@ -557,17 +614,48 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|PUAJ+qZuBVapqSivwv7Www==|xiR5AivuovExI92s5CkgDVYgw2ykU8XHplpVbW6YE1w=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|UBzVNuzvV2A9q6SlqkmPlQ==|jZaXSQ3w6vTvCZ8QaTwBM\/eUlbUkHxsoAah5J0Cmy6Q=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|gSKz5yUUkJ9CjJHhPW82fA==|l0\/rd+MfQ0uy+B805sW3z9MhdpgTC76ZFUVGLBQ064M=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|bTRRR84\/YX\/kX78ZwmGRQg==|3MJtQEmm9LSt+CPolWSPchxmsMW+0HNzXtSD30xkufw=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|BGCQ4TScB5D6RAZTu7WZaA==|fHDeY+aUHIh+rxaa5gZHp71XrwM8pW6Bhxf9jlH3I2c=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|1T\/tXiJiP3ZtILeupNToFg==|G3VA0YWxx6xLNNJyl9GNRHYMo3+K3kBQH+GNH3qbczo=}"
                         },
                         "type": "plugin",
-                        "name": "Enable resources",
+                        "name": "Enable the bundle",
+                        "children": []
+                    },
+                    {
+                        "allowFailure": false,
+                        "useImpersonation": false,
+                        "showHidden": false,
+                        "impersonationUseSudo": false,
+                        "commandName": "Check enable status of resources",
+                        "pluginName": "CICS TS",
+                        "pluginVersion": 38,
+                        "properties": {
+                            "resourceNameList": "${p:cics.bundle.definition.name}",
+                            "resourceType": "BUNDLE",
+                            "expectedStatus": "ENABLED",
+                            "timeout": "300",
+                            "hostname": "${p:cics.host}",
+                            "port": "${p:cics.cmciport}",
+                            "cicsplex": "${p?:cics.cicsplex}",
+                            "cicsscope": "${p?:cics.scope}",
+                            "username": "${p?:cics.username}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|uR6SnA3pBsJlzK0shQh\/rA==|hcKCL0NDDF85NBaAfmUPWtR7qi3kEl+NbMzzGg+7+tI=}",
+                            "ssl": "${p?:cics.ssl}",
+                            "ks_location": "${p?:cics.kslocation}",
+                            "ks_type": "${p?:cics.kstype}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|cXDo+XmqD5l4WL6CQFuSxg==|bSCbUB\/wXYgVgiewSVEVz7ij5mHoAyxyjNmShtQ7SHs=}",
+                            "ts_location": "${p?:cics.tslocation}",
+                            "ts_type": "${p?:cics.tstype}",
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|C+1IqyPCiEjgAzzo8oI17A==|py\/A\/YCgFb1bq+UMdpE822tF2CXryHJgzpb5hZvl6V0=}"
+                        },
+                        "type": "plugin",
+                        "name": "Check enable bundle is enabled",
                         "children": []
                     }
                 ]
@@ -607,7 +695,7 @@
                     },
                     {
                         "name": "Undeploy bundle from CICS",
-                        "x": -75,
+                        "x": -85,
                         "y": 180,
                         "h": 70,
                         "w": 280
@@ -615,7 +703,7 @@
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "bceaf9c4-7409-4a06-bf6e-064e67c7f4c3",
+                "name": "8a6d47cf-f72b-4951-aade-f6a422e3db3a",
                 "children": [
                     {
                         "type": "finish",
@@ -713,7 +801,7 @@
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "9227f45c-1db6-4465-bf42-a361ecd09db4",
+                "name": "f2a65a82-d941-4738-9337-13cc473f14b1",
                 "children": [
                     {
                         "type": "finish",
@@ -763,7 +851,7 @@
                         "pluginVersion": 53,
                         "properties": {
                             "baseDir": "${p:cics.platform.home}\/bundles",
-                            "includes": "${p:component.name}_${p:version.name}\/",
+                            "includes": "${p:component.name}_${p:cics.bundle.version}",
                             "excludes": "",
                             "followSymlinks": "false",
                             "caseSensitive": "true"
