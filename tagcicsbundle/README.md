@@ -1,6 +1,6 @@
 # tagcicsbundle
 
-Script to run on z/OS to tag files in a CICS bundle with a file encoding based on the file extension. The file tag is used by some file editors to automatically convert files to and from non-native EBCDIC code pages to browse and edit files. This can make it easier to quickly view CICS bundles when diagnosing issues.
+Script to run on z/OS to set the character set associated with each file in a CICS bundle based on the file extension. The character set is used by some file editors to automatically convert files to and from non-native EBCDIC code pages to browse and edit files. This can make it easier to quickly view CICS bundles when diagnosing issues.
  
 ## Requirements
 

@@ -1,12 +1,16 @@
 # CICS bundle
 
-The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy and undeploy bundles from CICS:
+The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy applications to CICS:
 
-* **Deploy** resolves variables in the new version of the bundle, undeploys the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
-* **Disable** disables the BUNDLE resource in CICS. CICS will disable each bundle part. This process may complete before the BUNDLE resource has fully disabled.
-* **Enable** enables the BUNDLE resource in CICS. CICS will attempt enable each bundle part. This process may complete before the BUNDLE resource has fully enabled.
+* **Deploy** resolves variables in the new version of the bundle, undeploys the old version of the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
 * **Undeploy** disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS.
 * **Undeploy and delete** disables the BUNDLE resource in CICS, discards the BUNDLE resource in CICS, then deletes the bundle from zFS.
+* **Enable** enables the BUNDLE resource in CICS.
+* **Disable** disables the BUNDLE resource in CICS.
+
+The processes assume the component contains only one CICS bundle.
+
+The processes will wait up to 300 seconds for actions to complete in CICS.
 
 ## Requirements
 
@@ -27,24 +31,24 @@ The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the f
 
 You can apply the template to a new component via **Components** > **Create Component** > Component Template: `CICS bundle`
 
-You can apply the template to an existing component, or change the  via **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
+You can apply the template to an existing component that does not already have a template via **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
 
-You cannot apply the template to an existing component if it already has a template.
-
-The template takes the following properties:
+The processes in the template makes use of the following properties:
 
 Property | Required | Description | Example
 --- | --- | --- | ---
-cics.bundle.definition.group | Yes | CICS CSD group name | MYGROUP
+cics.bundle.definition.group.name | Yes | CICS CSD group name | MYGROUP
 cics.bundle.definition.name | Yes | The name of the BUNDLE resource in CICS. | MYBUNDLE
 cics.bundle.version | Yes | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0
-cics.bundle.properties | Optional | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFH$WLP
+cics.platform.home | Yes | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1
+cics.bundle.properties <br/> cics.platform.properties| Optional | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFH$WLP
 
 ## Example
 
 1. Create a component for the CICS bundle.
     1. **Components** > **Create Component** > complete the dialog, including:
         1. Component Template: `CICS bundle`
+        1. Component Type: `Standard`
         1. cics.bundle.definition.group.name: `MYGROUP`
         1. cics.bundle.definition.name: `MYBUNDLE`
         1. cics.bundle.version: `1.0.0`
@@ -70,6 +74,6 @@ cics.bundle.properties | Optional | Properties used to resolve variables in the 
 1. Configure your build process to build the CICS bundle from the Eclipse source projects and push it into UCD as a version of the CICS bundle component. For example, see the [pushcicsbundletoucd](https://github.com/cicsdev/cics-bundle-scripts/tree/master/pushcicsbundletoucd) script.
 1. Deploy the application.
 
-## Reference
+## References
 
 * [Creating Applications Based on Templates - UrbanCode Deploy v.6.2](https://developer.ibm.com/urbancode/videos/creating-applications-based-on-templates-urbancode-deploy-v-6-2/)

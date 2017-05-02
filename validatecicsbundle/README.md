@@ -4,12 +4,12 @@ Script to validate contents of a CICS bundle against a set of rules.
 
 ## Requirements
 
-* [xmllint](http://xmlsoft.org/xmllint.html) XML parser. Used to parse the CICS bundle manifest (cics.xml) and bundle parts. Typically pre-installed on Linux as part of the libxml2 library. It is not currently available on z/OS.
-* [sed](https://www.gnu.org/software/sed/manual/sed.html) stream editor. Used of evaluate the the rule regex pattern. Typically pre-installed on Linux and [z/OS](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.bpxa400/bpxug375.htm).
+* [xmllint](http://xmlsoft.org/xmllint.html) XML parser, in particular a version that supports the --xpath parameter. Used to parse the CICS bundle manifest (cics.xml) and bundle parts. Typically pre-installed on Linux as part of the libxml2 library. It is not currently available on z/OS.
+* [sed](https://www.gnu.org/software/sed/manual/sed.html) stream editor. Used to evaluate the rule's regex pattern. Typically pre-installed on Linux and [z/OS](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.bpxa400/bpxug375.htm).
 
 ## Usage
 
-Validate the CICS bundle specified by DIRECTORY against a rule specified by the -f -x -e options and/or the rules specified in FILE. The script return code is set to 0 if all rules validate to true, otherwise it is set to > 0.
+Validate the CICS bundle specified by DIRECTORY against a rule specified by the -f -x and -e options and the rules file specified by the -r option. The script return code is set to 0 if all rules validate to true, otherwise it is set to the number of rules that failed.
 
 ```
 validatecicsbundle -hv -f FILEPATTERN -x XPATH -e REGEX -r FILE DIRECTORY
@@ -22,6 +22,7 @@ Options:
 -x, --xpath XPATH               Rule XPath to evaluate
 -e, --regex REGEX               Rule regular expression that the XPath is required to match
 -r, --rules FILE                File containing a set of rules
+
 DIRECTORY is the CICS bundle directory to be validated.
 ```
 FILE is a file containing a logical set of rules, one on each line. Escape characters can be used.
@@ -32,13 +33,13 @@ Each rule in FILE should follow the format: FILEPATTERN XPATH REGEX
 
 ## Examples
 
-For CICS bundle catalog.example.service validate that all *.urimap files contain an attribute 'name' with a value that starts with the characters EX.
+For the CICS bundle catalog.example.service validate that all *.urimap files contain an attribute name with a value that starts with the characters EX.
 
-`validatecicsbundle -f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service`
+    `validatecicsbundle -f "*.urimap" -x "string(//@name)" -e "^EX" -v catalog.example.service`
 
-For CICS bundle catalog.example.service validate the rules specified in file rules.txt.
+For CICS bundle catalog.example.service, validate the rules specified in file rules.txt.
 
-`validatecicsbundle -r rules.txt -v catalog.example.service`
+    `validatecicsbundle -r rules.txt -v catalog.example.service`
 
 Example rules.txt file.
 

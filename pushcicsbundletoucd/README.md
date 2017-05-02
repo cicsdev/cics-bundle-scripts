@@ -1,10 +1,10 @@
 # pushcicsbundletoucd
-Script to push a CICS bundle into IBM UrbanCode Deploy as a component version.
+Script to push a CICS bundle into IBM UrbanCode Deploy (UCD) as a component version.
 
 ## Requirements
 
-* [xmllint](http://xmlsoft.org/xmllint.html) that supports the --xpath parameter. This is used to parse CICS bundle parts.
-* udclient - download from the UCD web interface by selecting **Help** > **IBM UrbanCode Deploy Client**. This is used to interact with UCD to remove and create a component version, and add properties and files to a component version.
+* [xmllint](http://xmlsoft.org/xmllint.html) XML parser, in particular a version that supports the --xpath parameter. Used to parse CICS bundle parts. Typically pre-installed on Linux as part of the libxml2 library. It is not currently available on z/OS.
+* [udclient](https://www.ibm.com/support/knowledgecenter/en/SS4GSP_6.2.4/com.ibm.udeploy.reference.doc/topics/cli_ch.html) UCD command-line client. Install from the UCD web interface by selecting **Help** > **IBM UrbanCode Deploy Client**. This is used to interact with UCD to remove and create a component version, and to add properties and files to a component version.
 
 ## Usage
 
@@ -45,5 +45,5 @@ DIRECTORY is the output directory created by the CICS build toolkit to be pushed
 
     Alternateively, to append a time stamp to the name of the component version.
     
-    `pushcicsbundletoucd -q "-"`date +%Y-%m-%d-%H:%M:%S` ./build/output` `
+    `pushcicsbundletoucd -q "-"`date +%Y-%m-%d-%H:%M:%S` ./build/output`
 
