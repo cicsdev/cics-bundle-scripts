@@ -1,6 +1,6 @@
 # CICS bundle
 
-The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy applications to CICS:
+The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy bundles to CICS:
 
 * **Deploy** resolves variables in the new version of the bundle, undeploys the old version of the BUNDLE resource in CICS, then deploys the new version of the BUNDLE resource in CICS.
 * **Undeploy** disables the BUNDLE resource in CICS, then discards the BUNDLE resource in CICS.
@@ -16,32 +16,33 @@ The processes will wait up to 300 seconds for actions to complete in CICS.
 
 * [IBM UrbanCode Deploy](https://developer.ibm.com/urbancode/products/urbancode-deploy/) version 6.2.3 or later. Used to store the CICS bundle as a component version, and to coordinate the deployment of the CICS bundle to CICS.
 * [IBM CICS TS plug-in for UCD](https://developer.ibm.com/urbancode/plugin/cics-ts/) version 38 or later. Provides the process steps to deploy, undeploy, enable, and disable a CICS bundle.
-* [CICS build toolkit](http://www.ibm.com/support/docview.wss?uid=swg24041185) version 5.3.0 or later installed on zFS. Used by the Deploy templte process to resolve variables in the CICS bundle.
+* [CICS build toolkit](http://www.ibm.com/support/docview.wss?uid=swg24041185) version 5.3.0 or later installed on zFS. Used by the Deploy template process to resolve variables in the CICS bundle.
 * [CICS Transaction Server](https://www.ibm.com/ms-en/marketplace/cics-transaction-server) version 5.1 or later. Used to host the CICS bundle.
 
 ## Installation
 
-1. Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
+Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 
-    **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
+* **Components** > **Template** > **Import Template** > select Upgrade Template > **Browse** > select CICS+bundle.json > **Submit**
 
-1. Set the property cicsbt.directory to the zFS directory where the CICS build toolkit is installed. This would typically be set in a resource below the agent, for example in a resource group for the CICSplex.
-  
 ## Usage
 
-You can apply the template to a new component via **Components** > **Create Component** > Component Template: `CICS bundle`
+1. Apply the template to the component:
 
-You can apply the template to an existing component that does not already have a template via **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
+    * For a new component: **Components** > **Create Component** > Component Template: `CICS bundle`
+    * For an existing component that does not already have a template:  **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
 
-The processes in the template makes use of the following properties:
+1. Set the following properties:
 
-Property | Required | Description | Example
---- | --- | --- | ---
-cics.bundle.definition.group.name | Yes | CICS CSD group name | MYGROUP
-cics.bundle.definition.name | Yes | The name of the BUNDLE resource in CICS. | MYBUNDLE
-cics.bundle.version | Yes | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0
-cics.platform.home | Yes | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1
-cics.bundle.properties <br/> cics.platform.properties| Optional | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFH$WLP
+    Property | Description | Example | Required | Where to set
+--- | --- | --- | --- | ---
+cics.bundle.definition.group.name | CICS CSD group name | MYGROUP  | Yes | Component
+cics.bundle.definition.name | The name of the BUNDLE resource in CICS. | MYBUNDLE | Yes | Component
+cics.bundle.properties | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFH$WLP | Optional | Component
+cics.bundle.version | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0 | Yes | Component version
+cics.platform.home | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | CICSplex resource
+cics.platform.properties| Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | | Optional | CICSplex resource
+cicsbt.directory | The zFS directory where the CICS build toolkit is installed. This would typically be set in a resource below the agent, for example in a resource group for the CICSplex. | /usr/lpp/cicsbt | Yes | CICSplex resource
 
 ## Example
 
