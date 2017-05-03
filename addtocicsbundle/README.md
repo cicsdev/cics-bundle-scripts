@@ -24,11 +24,11 @@ Add Java files to the CICS bundle specified by DIRECTORY.
 
 Options:
 
--a FILES, --add             Files or directory of files to add to the CICS bundle
--j JVMSERVER, --jvmserver	CICS JVMSERVER resource name
-                            The default is DFHWLP for .war .ear .eba file extensions, and DFHOSGI for .jar file extensions
--h, --help                  Help
--v, --verbose               Verbose messages
+-a FILES, --add            Files or directory of files to add to the CICS bundle
+-j JVMSERVER, --jvmserver  CICS JVMSERVER resource name
+                           The default is DFHWLP for .war .ear .eba file extensions, and DFHOSGI for .jar file extensions
+-h, --help                 Help
+-v, --verbose              Verbose messages
 
 DIRECTORY is the CICS bundle directory
 ~~~~
