@@ -1,13 +1,11 @@
 # tagcicsbundle
 
-Script to add pre-build Java archives to a CICS bundle.
+Script to add pre-build Java archive files to a CICS bundle, including:
 
-Archives include:
-
-* .jar for OSGI bundles
-* .war for Web Archives
-* .eba for Enterprise Business Archives
-* .ear for Enterprise Archives
+* .jar files for OSGI bundles
+* .war files for Web Archives
+* .eba files for Enterprise Business Archives
+* .ear files for Enterprise Archives
  
 If the CICS bundle does not exist, it will be created.
  
@@ -31,4 +29,30 @@ Options:
 -v, --verbose              Verbose messages
 
 DIRECTORY is the CICS bundle directory
+~~~~
+
+## Example
+
+Create a CICS bundle in directory input/MyBundle and add *.war Java archive files into it. Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
+~~~~console
+addtocicsbundle -v -a "*.war" input/MyBundle
+
+Copying file com.ibm.cics.server.examples.wlp.hello.war.war to input/MyBundle
+Creating CICS bundle part file input/MyBundle/com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
+Copying file com.ibm.cics.server.examples.wlp.link.war to input/MyBundle
+Creating CICS bundle part file input/MyBundle/com.ibm.cics.server.examples.wlp.link.war.warbundle
+
+Summary for directory:
+input/MyBundle:
+total 80
+-rw-r--r-- 1 cockerma cockerma 60618 May  3 18:20 com.ibm.cics.server.examples.wlp.hello.war.war
+-rw-r--r-- 1 cockerma cockerma   147 May  3 18:20 com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
+-rw-r--r-- 1 cockerma cockerma  5761 May  3 18:20 com.ibm.cics.server.examples.wlp.link.war
+-rw-r--r-- 1 cockerma cockerma   142 May  3 18:20 com.ibm.cics.server.examples.wlp.link.war.warbundle
+drwxr-xr-x 2 cockerma cockerma  4096 May  3 18:20 META-INF
+
+input/MyBundle/META-INF:
+total 4
+-rw-r--r-- 1 cockerma cockerma 748 May  3 18:20 cics.xml
+Exiting with RC=0
 ~~~~
