@@ -59,5 +59,6 @@ total 4
 Exiting with RC=0
 ~~~~
 
-The output directory can now be copied to the CICS platform home on zFS (by default /var/cicsts/CICSPlex/_platform1_/ ) as described in [Platform directory structure in z/OS UNIX](https://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.productoverview.doc/concepts/platforms_directory_structure.html)
-staged, for example to IBM UrbanCode Deploy
+The output directory can now be copied to the CICS platform home on zFS (by default /var/cicsts/CICSPlex/_platform1_/ ) as described in [Platform directory structure in z/OS UNIX](https://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.productoverview.doc/concepts/platforms_directory_structure.html).
+
+Alternatively, the CICS bundle could be staged ready for later deployment, for example you could use the [pushcicsbundletoucd](../pushcicsbundletoucd) script to create a component version of the bundle in IBM UrbanCode Deploy.
