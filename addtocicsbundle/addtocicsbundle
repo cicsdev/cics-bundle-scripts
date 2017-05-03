@@ -1,0 +1,229 @@
+#!/bin/bash
+#############################################################################################
+# Script to add Java parts to a CICS bundle
+#
+# Licensed Materials - Property of IBM.
+# (c) Copyright IBM Corporation 2017. All Rights Reserved.
+# US Government Users Restricted Rights
+# Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corporation
+#############################################################################################
+
+show_usage () {
+	echo -e "Usage:\t"$(basename "$0") "[-hv] [-j JVMSERVER] -a FILES DIRECTORY"
+}
+
+show_help () {
+	show_usage
+	echo
+	echo "Add Java files to the CICS bundle specified by DIRECTORY."
+	echo
+	echo "Options:"
+	echo -e "\t-a FILES, --add\t\t\tFiles or directory of files to add to the CICS bundle"
+	echo -e "\t-j JVMSERVER, --jvmserver\tCICS JVMSERVER resource name"
+	echo -e "\t\t\t\t\tThe default is DFHWLP for .war .ear .eba file extensions, and DFHOSGI for .jar file extensions"
+	echo -e "\t-h, --help\t\t\tHelp"
+	echo -e "\t-v, --verbose\t\t\tVerbose messages"
+	echo -e "\tDIRECTORY is the CICS bundle directory"
+}
+
+# Function to create an empty CICS bundle
+create_bundle() {
+	# Create the CICS bundle directory
+	mkdir -p "$MANIFEST_DIRECTORY"
+	
+	if [[ ! -d "${DIRECTORY}" ]] ; then
+		echo "Could not create directory ${MANIFEST_DIRECTORY}"
+		exit 1
+	fi
+	
+	# Create the CICS bundle manifest file
+	MANIFEST_TIMESTAMP=$(date +"%Y-%m-%dT%T.%3N%:z")
+	MANIFEST_BUNDLEMAJORVER="1"
+	MANIFEST_BUNDLEMINORVER="0"
+	MANIFEST_BUNDLEMICROVER="0"
+
+	cat > "${MANIFEST}" <<EOF
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="$MANIFEST_ID" bundleMajorVer="$MANIFEST_BUNDLEMAJORVER" bundleMinorVer="$MANIFEST_BUNDLEMINORVER" bundleMicroVer="$MANIFEST_BUNDLEMICROVER" bundleVersion="1" bundleRelease="0">
+    <meta_directives>
+        <timestamp>$MANIFEST_TIMESTAMP</timestamp>
+    </meta_directives>
+</manifest>
+EOF
+} 
+
+# Function to add a file to a CICS bundle
+add_file_to_cics_bundle() { 
+	if [[ "${SYMBOLICNAME}" = "" ]] ; then
+		FILENAME=$(basename "${FILE}")
+		FILEEXTENSION="${FILENAME##*.}"
+		
+		if [[ "$FILEEXTENSION" = "jar" ]] ; then
+			SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
+			BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
+		else
+			SYMBOLICNAME="${FILENAME%.*}"
+		fi
+	fi
+	
+	if [[ ! -d "${DIRECTORY}" ]] ; then
+		MANIFEST_ID="${SYMBOLICNAME}"
+		create_bundle
+	elif [[ -z "${MANIFEST_ID}" ]] ; then
+		MANIFEST_ID=$(xmllint --xpath "string(//@id)" $MANIFEST)
+	fi
+	
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Copying file ${FILE} to ${DIRECTORY}"
+	fi
+    cp "${FILE}" "${DIRECTORY}"
+
+	# Set bundle part JVMSERVER
+	if [[ -z "${JVMSERVER}" ]] ; then
+		if [[ "${FILEEXTENSION}" -eq "jar" ]] ; then
+			BUNDLEPARTJVMSERVER="DFHOSGI"
+		else
+			BUNDLEPARTJVMSERVER="DFHWLP"
+		fi
+	else
+		BUNDLEPARTJVMSERVER="${JVMSERVER}"
+	fi
+
+	# Relate the file type to the CICS bundle part type
+  	case "${FILEEXTENSION}" in
+    	"jar")
+    		BUNDLEPARTEXTENSION="osgibundle"
+    		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" version="'${BUNDLEPARTVERSION}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+    		;;
+    	"war")
+    		BUNDLEPARTEXTENSION="warbundle"
+			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+    		;;
+    	"ear")
+    		BUNDLEPARTEXTENSION="earbundle"
+			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+    		;;
+    	"eba")
+    		BUNDLEPARTEXTENSION="ebabundle"
+			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+    		;;
+    	*)
+    	    BUNDLEPARTEXTENSION=""
+    	    ;;
+	esac
+	
+	if [[ -z "${BUNDLEPARTEXTENSION}" ]] ; then
+		# do not create a CICS bundle part if it was not a recognised type
+		exit
+	fi
+
+	BUNDLEPARTTYPE="http://www.ibm.com/xmlns/prod/cics/bundle/${BUNDLEPARTEXTENSION^^}"
+	BUNDLEPARTFILE=${DIRECTORY}/${FILENAME}.${BUNDLEPARTEXTENSION}
+	echo "Creating CICS bundle part file ${BUNDLEPARTFILE}"
+	echo "${BUNDLEPART}" > "${BUNDLEPARTFILE}" 
+
+   	# Add part to the CICS bundle manifest
+   	BUNDLEPART='    <define name="'${FILENAME}'" type="'${BUNDLEPARTTYPE}'" path="'${FILENAME}'.'${BUNDLEPARTEXTENSION}'"/>'
+   	sed -i '/<\/manifest>/i\'"$BUNDLEPART" "${MANIFEST}"
+   	
+   	if [[ -f "${ECLIPSEPREFS}" ]] ; then
+   		# Append to Eclipse prefs file
+   		echo "encoding/${BUNDLEPARTFILE}=UTF-8" >> "${ECLIPSEPREFS}"
+	fi
+	
+	SYMBOLICNAME=""
+}
+
+# Function to add files to a CICS bundle
+add_files_to_cics_bundle() { 
+	for FILE in $FILES ; do
+		MESSAGE=$(add_file_to_cics_bundle "${FILE}")
+		RC=$?
+  
+		if [[ ! -z ${MESSAGE} ]] ; then 
+			echo -n -e "${MESSAGE}\n"
+		fi
+
+		TOTALRC=$((TOTALRC + RC))
+	done
+	
+	if [[ $VERBOSE == 1 ]] ; then
+		echo
+		echo "Summary for directory:"
+		ls -lR ${DIRECTORY}
+	fi
+}
+
+# Process script long options by transforming them to the short option equivalent
+for arg in "$@" ; do
+  	shift
+  	case "$arg" in
+    	"--add")
+    		set -- "$@" "-a" ;;
+    	"--jvmserver")
+    		set -- "$@" "-j" ;;
+    	"--verbose")
+    		set -- "$@" "-v" ;;
+    	"--help")
+    		set -- "$@" "-h" ;;
+    	*)
+    	    set -- "$@" "$arg"
+	esac
+done
+
+# Process script short options
+VERBOSE=0
+while getopts ":a:j:r:vh" opt ; do
+	case "$opt" in
+		a)
+			FILES=${OPTARG} ;;
+		j)
+			JVMSERVER=${OPTARG} ;;
+		v)
+			VERBOSE=1 ;;
+		h)
+			show_help
+			exit 0 ;;
+	esac
+done
+shift $((OPTIND-1))
+
+# The remainder of the command line is the CICS bundle directory
+DIRECTORY=$@
+MANIFEST_DIRECTORY="${DIRECTORY}/META-INF"
+MANIFEST="${MANIFEST_DIRECTORY}/cics.xml"
+ECLIPSEPREFS="${DIRECTORY}/.settings/project/org.eclipse.core.resources.prefs"
+TOTALRC=0
+
+# Validate files
+if [[ -z "${FILES}" ]] ; then
+	echo "FILES was not specified"
+	show_usage
+	exit 1
+fi
+# Expand ~ to HOME directory
+FILES="${FILES/#\~/$HOME}"
+if [[ -d "${FILES}" ]] ; then
+	FILES="${FILES}/*"
+fi
+
+# Validate directory is a CICS bundle
+if [[ -z "${DIRECTORY}" ]] ; then
+	echo "DIRECTORY was not specified"
+	show_usage
+	exit 1
+elif [[ ! -d "${DIRECTORY}" ]] ; then
+	# Directory will be created later
+	:
+elif [[ ! -f "${MANIFEST}" ]] ; then
+	echo "${DIRECTORY} directory is not a CICS bundle"
+	show_usage
+	exit 1
+fi
+
+add_files_to_cics_bundle
+
+if [[ $VERBOSE == 1 ]] ; then
+	echo "Exiting with RC=${TOTALRC}"
+fi
+exit ${TOTALRC}
