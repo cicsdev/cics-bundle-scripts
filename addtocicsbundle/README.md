@@ -7,7 +7,7 @@ Script to add pre-build Java archive files to a CICS bundle, including:
 * .eba files for Enterprise Business Archives
 * .ear files for Enterprise Archives
  
-If the CICS bundle does not exist, it will be created.
+If the CICS bundle does not exist, it will be created. Note if the CICS bundle only contains pre-built Java archive files it does not need to be built by the CICS build toolkit.
  
 ## Requirements
 
@@ -36,24 +36,28 @@ DIRECTORY is the CICS bundle directory
 Create a CICS bundle in directory input/MyBundle, add *.war Java archive files into it with the CICS bundle parts specifying they shoud be installed in the WLP JVM server. Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
 
 ~~~~console
-addtocicsbundle -v -j WLP -a "*.war" input/MyBundle
+$ addtocicsbundle -v -j WLP -a "*.war" bundles/MyBundle
 
-Copying file com.ibm.cics.server.examples.wlp.hello.war.war to input/MyBundle
-Creating CICS bundle part file input/MyBundle/com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
-Copying file com.ibm.cics.server.examples.wlp.link.war to input/MyBundle
-Creating CICS bundle part file input/MyBundle/com.ibm.cics.server.examples.wlp.link.war.warbundle
+Creating empty CICS bundle at bundles/MyBundle
+Copying file com.ibm.cics.server.examples.wlp.hello.war.war to bundles/MyBundle
+Creating CICS bundle part file bundles/MyBundle/com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
+Copying file com.ibm.cics.server.examples.wlp.link.war to bundles/MyBundle
+Creating CICS bundle part file bundles/MyBundle/com.ibm.cics.server.examples.wlp.link.war.warbundle
 
 Summary for directory:
-input/MyBundle:
+bundles/MyBundle:
 total 80
--rw-r--r-- 1 cockerma cockerma 60618 May  3 18:20 com.ibm.cics.server.examples.wlp.hello.war.war
--rw-r--r-- 1 cockerma cockerma   147 May  3 18:20 com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
--rw-r--r-- 1 cockerma cockerma  5761 May  3 18:20 com.ibm.cics.server.examples.wlp.link.war
--rw-r--r-- 1 cockerma cockerma   142 May  3 18:20 com.ibm.cics.server.examples.wlp.link.war.warbundle
-drwxr-xr-x 2 cockerma cockerma  4096 May  3 18:20 META-INF
+-rw-r--r-- 1 cockerma cockerma 60618 May  3 19:32 com.ibm.cics.server.examples.wlp.hello.war.war
+-rw-r--r-- 1 cockerma cockerma   143 May  3 19:32 com.ibm.cics.server.examples.wlp.hello.war.war.warbundle
+-rw-r--r-- 1 cockerma cockerma  5761 May  3 19:32 com.ibm.cics.server.examples.wlp.link.war
+-rw-r--r-- 1 cockerma cockerma   138 May  3 19:32 com.ibm.cics.server.examples.wlp.link.war.warbundle
+drwxr-xr-x 2 cockerma cockerma  4096 May  3 19:32 META-INF
 
-input/MyBundle/META-INF:
+bundles/MyBundle/META-INF:
 total 4
--rw-r--r-- 1 cockerma cockerma 748 May  3 18:20 cics.xml
+-rw-r--r-- 1 cockerma cockerma 748 May  3 19:32 cics.xml
 Exiting with RC=0
 ~~~~
+
+The output directory can now be copied to the CICS platform home on zFS (by default /var/cicsts/CICSPlex/_platform1_/ ) as described in [Platform directory structure in z/OS UNIX](https://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.productoverview.doc/concepts/platforms_directory_structure.html)
+staged, for example to IBM UrbanCode Deploy

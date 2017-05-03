@@ -29,6 +29,7 @@ show_help () {
 # Function to create an empty CICS bundle
 create_bundle() {
 	# Create the CICS bundle directory
+	echo "Creating empty CICS bundle at ${DIRECTORY}"
 	mkdir -p "$MANIFEST_DIRECTORY"
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
