@@ -20,7 +20,7 @@ show_help () {
 	echo "Options:"
 	echo -e "\t-a FILES, --add\t\t\tFiles or directory of files to add to the CICS bundle"
 	echo -e "\t-j JVMSERVER, --jvmserver\tCICS JVMSERVER resource name"
-	echo -e "\t\t\t\t\tThe default is DFHWLP for .war .ear .eba file extensions, and DFHOSGI for .jar file extensions"
+	echo -e "\t\t\t\t\tThe default is DFHWLP for files with .war .ear .eba extensions, and DFHOSGI .jar extensions"
 	echo -e "\t-h, --help\t\t\tHelp"
 	echo -e "\t-v, --verbose\t\t\tVerbose messages"
 	echo -e "\tDIRECTORY is the CICS bundle directory"

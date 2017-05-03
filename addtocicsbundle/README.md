@@ -7,7 +7,7 @@ Script to add pre-build Java archive files to a CICS bundle, including:
 * .eba files for Enterprise Business Archives
 * .ear files for Enterprise Archives
  
-If the CICS bundle does not exist, it will be created. Note if the CICS bundle only contains pre-built Java archive files it does not need to be built by the CICS build toolkit.
+If the CICS bundle does not exist, it will be created. If the CICS bundle contains only pre-built Java archive files, it does not need to be built by the CICS build toolkit.
  
 ## Requirements
 
@@ -24,7 +24,7 @@ Options:
 
 -a FILES, --add            Files or directory of files to add to the CICS bundle
 -j JVMSERVER, --jvmserver  CICS JVMSERVER resource name
-                           The default is DFHWLP for .war .ear .eba file extensions, and DFHOSGI for .jar file extensions
+                           The default is DFHWLP for files with .war .ear .eba extensions, and DFHOSGI .jar extensions
 -h, --help                 Help
 -v, --verbose              Verbose messages
 
@@ -33,7 +33,9 @@ DIRECTORY is the CICS bundle directory
 
 ## Example
 
-Create a CICS bundle in directory input/MyBundle, add *.war Java archive files into it with the CICS bundle parts specifying they shoud be installed in the WLP JVM server. Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
+Create a CICS bundle in directory input/MyBundle and add *.war Java archive files that will be installed into the JVM sserver called WLP.
+
+Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
 
 ~~~~console
 $ addtocicsbundle -v -j WLP -a "*.war" bundles/MyBundle
@@ -59,6 +61,6 @@ total 4
 Exiting with RC=0
 ~~~~
 
-The output directory can now be copied to the CICS platform home on zFS (by default /var/cicsts/CICSPlex/_platform1_/ ) as described in [Platform directory structure in z/OS UNIX](https://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.productoverview.doc/concepts/platforms_directory_structure.html).
+The bundles/MyBundle directory can now be copied to zFS, such as the CICS platform home /var/cicsts/CICSPlex/_platform1_/. Details of the CICS platform home are described in [Platform directory structure in z/OS UNIX](https://www.ibm.com/support/knowledgecenter/SSGMCP_5.3.0/com.ibm.cics.ts.productoverview.doc/concepts/platforms_directory_structure.html).
 
-Alternatively, the CICS bundle could be staged ready for later deployment, for example you could use the [pushcicsbundletoucd](../pushcicsbundletoucd) script to create a component version of the bundle in IBM UrbanCode Deploy.
+Alternatively, the bundles/MyBundle directory can be copied (staged) to IBM UrbanCode Deploy ready for later deployment using the [pushcicsbundletoucd](../pushcicsbundletoucd) script.

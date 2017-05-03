@@ -1,14 +1,22 @@
 # cics-bundle-scripts
 Sample scripts to process the contents in a CICS bundle:
 
-* [addtocicsbundle](addtocicsbundle) Script to add pre-build Java archives to a CICS bundle.
-* [tagcicsbundle](tagcicsbundle) tag files in a CICS bundle with their file encoding based on the file extension. The file tag is used by some file editors in ISPF to automatically convert files to and from non-native EBCDIC code pages to browse and edit files.
-* [validatecicsbundle](validatecicsbundle) validate contents of a CICS bundle against a set of rules.
+* [addtocicsbundle](addtocicsbundle) adds pre-build Java archives to a CICS bundle.
+    Can be used by build systems to deploy Java applications to CICS within a CICS bundle without having to create them in CICS Explorer and mange them in a source code system.
+
+* [tagcicsbundle](tagcicsbundle) tags text files in a CICS bundle with an encoding based on the file extension.
+    Once files in the CICS bundle have the correct file tag encoding, editors such as ISPF can be used to easily view them which can be useful for problem diagnosis.
+
+* [validatecicsbundle](validatecicsbundle) validates the contents of a CICS bundle against a set of rules.
+    Can be used by build systems to check certain company convensions or best practices are implemented, for example naming conventions or specific resource attributes are enabled or disabled.
 
 For using CICS bundles with IBM UrbanCode Deploy (UCD):
 
-* [pushcicsbundletoucd](pushcicsbundletoucd) script to push a CICS bundle into UCD as a component version.
-* [ucdtemplates](ucdtemplates) component template for UCD to reliably deploy and undeploy bundles from CICS.
+* [pushcicsbundletoucd](pushcicsbundletoucd) pushes a CICS bundle into UCD as a component version.
+    Can be used by build systems to copy (stage) a CICS bundle into UCD ready for later deployment.
+
+* [ucdtemplates](ucdtemplates) is a component template for UCD to reliably deploy and undeploy bundles from CICS.
+    Can be used to easily deploy and undeploy applications that include CICS bundles.
 
 ## License
-This project is licensed under [Apache License Version 2.0](LICENSE).  
+This project is licensed under [Apache License Version 2.0](LICENSE).
