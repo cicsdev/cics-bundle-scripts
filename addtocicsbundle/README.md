@@ -33,9 +33,10 @@ DIRECTORY is the CICS bundle directory
 
 ## Example
 
-Create a CICS bundle in directory input/MyBundle and add *.war Java archive files into it. Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
+Create a CICS bundle in directory input/MyBundle, add *.war Java archive files into it with the CICS bundle parts specifying they shoud be installed in the WLP JVM server. Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
+
 ~~~~console
-addtocicsbundle -v -a "*.war" input/MyBundle
+addtocicsbundle -v -j WLP -a "*.war" input/MyBundle
 
 Copying file com.ibm.cics.server.examples.wlp.hello.war.war to input/MyBundle
 Creating CICS bundle part file input/MyBundle/com.ibm.cics.server.examples.wlp.hello.war.war.warbundle

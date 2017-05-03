@@ -54,16 +54,14 @@ EOF
 
 # Function to add a file to a CICS bundle
 add_file_to_cics_bundle() { 
-	if [[ "${SYMBOLICNAME}" = "" ]] ; then
-		FILENAME=$(basename "${FILE}")
-		FILEEXTENSION="${FILENAME##*.}"
+	FILENAME=$(basename "${FILE}")
+	FILEEXTENSION="${FILENAME##*.}"
 		
-		if [[ "$FILEEXTENSION" = "jar" ]] ; then
-			SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
-			BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
-		else
-			SYMBOLICNAME="${FILENAME%.*}"
-		fi
+	if [[ "$FILEEXTENSION" = "jar" ]] ; then
+		SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
+		BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
+	else
+		SYMBOLICNAME="${FILENAME%.*}"
 	fi
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
@@ -76,7 +74,7 @@ add_file_to_cics_bundle() {
 	if [[ $VERBOSE == 1 ]] ; then
 		echo "Copying file ${FILE} to ${DIRECTORY}"
 	fi
-    cp "${FILE}" "${DIRECTORY}"
+	cp "${FILE}" "${DIRECTORY}"
 
 	# Set bundle part JVMSERVER
 	if [[ -z "${JVMSERVER}" ]] ; then
@@ -113,7 +111,7 @@ add_file_to_cics_bundle() {
 	esac
 	
 	if [[ -z "${BUNDLEPARTEXTENSION}" ]] ; then
-		# do not create a CICS bundle part if it was not a recognised type
+		# Do not create a CICS bundle part if it was not a recognised type
 		exit
 	fi
 
@@ -168,7 +166,7 @@ done
 
 # Process script short options
 VERBOSE=0
-while getopts ":a:j:r:vh" opt ; do
+while getopts ":a:j:vh" opt ; do
 	case "$opt" in
 		a)
 			FILES=${OPTARG} ;;
@@ -189,7 +187,7 @@ MANIFEST_DIRECTORY="${DIRECTORY}/META-INF"
 MANIFEST="${MANIFEST_DIRECTORY}/cics.xml"
 TOTALRC=0
 
-# Validate files
+# Validate FILES parameter
 if [[ -z "${FILES}" ]] ; then
 	echo "FILES was not specified"
 	show_usage
@@ -201,7 +199,7 @@ if [[ -d "${FILES}" ]] ; then
 	FILES="${FILES}/*"
 fi
 
-# Validate directory is a CICS bundle
+# Validate DIRECTORY parameter is a CICS bundle if the directory already exists
 if [[ -z "${DIRECTORY}" ]] ; then
 	echo "DIRECTORY was not specified"
 	show_usage
