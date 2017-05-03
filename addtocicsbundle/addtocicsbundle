@@ -126,11 +126,6 @@ add_file_to_cics_bundle() {
    	BUNDLEPART='    <define name="'${FILENAME}'" type="'${BUNDLEPARTTYPE}'" path="'${FILENAME}'.'${BUNDLEPARTEXTENSION}'"/>'
    	sed -i '/<\/manifest>/i\'"$BUNDLEPART" "${MANIFEST}"
    	
-   	if [[ -f "${ECLIPSEPREFS}" ]] ; then
-   		# Append to Eclipse prefs file
-   		echo "encoding/${BUNDLEPARTFILE}=UTF-8" >> "${ECLIPSEPREFS}"
-	fi
-	
 	SYMBOLICNAME=""
 }
 
@@ -192,7 +187,6 @@ shift $((OPTIND-1))
 DIRECTORY=$@
 MANIFEST_DIRECTORY="${DIRECTORY}/META-INF"
 MANIFEST="${MANIFEST_DIRECTORY}/cics.xml"
-ECLIPSEPREFS="${DIRECTORY}/.settings/project/org.eclipse.core.resources.prefs"
 TOTALRC=0
 
 # Validate files
