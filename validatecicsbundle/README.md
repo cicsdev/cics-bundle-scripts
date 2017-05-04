@@ -4,6 +4,7 @@ Script to validate contents of a CICS bundle against a set of rules.
 
 ## Requirements
 
+* [bash](https://www.gnu.org/software/bash/bash.html?cm_mc_uid=33935548072714933125385&cm_mc_sid_50200000=1493879051&cm_mc_sid_52640000=1493879738#downloading) is used to run the script. For Linux this is likely pre-installed. For z/OS it is available from [Ported Tools](https://www-03.ibm.com/systems/z/os/zos/features/unix/bpxa1ty1.html).
 * [xmllint](http://xmlsoft.org/xmllint.html) XML parser, in particular a version that supports the --xpath parameter. Used to parse the CICS bundle manifest (cics.xml) and bundle parts. Typically pre-installed on Linux as part of the libxml2 library. It is not currently available on z/OS.
 * [sed](https://www.gnu.org/software/sed/manual/sed.html) stream editor. Used to evaluate the rule's regex pattern. Typically pre-installed on Linux and [z/OS](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.bpxa400/bpxug375.htm).
 

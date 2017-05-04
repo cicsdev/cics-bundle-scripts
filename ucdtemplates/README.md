@@ -29,22 +29,32 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 
 ## Usage
 
-1. Apply the template to the component:
+1. Apply the template to the component.
 
     * For a new component: **Components** > **Create Component** > Component Template: `CICS bundle`
     * For an existing component that does not already have a template:  **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
 
-1. Set the following properties:
+1. Set the template properies.
+
+    * To set a template property in a component: **Components** > select component > **Basic Settings**
+    * To set a property in a component version: This is typicaly set by a build system when the component version is created, otherwise this can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
+    * To set a property in a resource: **Resources** > select resource > **Configuration** > **Resource Properties**
+
+1. Use the processes provided by the template.
+
+    * In an application process: **Applications** > **Processes** > select process > drag **Install Component** step onto process > Component Process: select process such as Deploy (Template).
+
+## Template properties
 
 Property | Description | Example | Required | Where to set
 --- | --- | --- | --- | ---
-cics.bundle.definition.group.name | CICS CSD group name. | MYGROUP  | Yes | Component
-cics.bundle.definition.name | The name of the BUNDLE resource in CICS. | MYBUNDLE | Yes | Component
-cics.bundle.properties | Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFHWLP | Optional | Component
-cics.bundle.version | The CICS bundle version used to define the BUNDLE  resource in CICS. | 1.0.0 | Yes | Component version
-cics.platform.home | The CICS platform home directory in zFS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | CICSplex resource
-cics.platform.properties| Properties used to resolve variables in the CICS bundle variables by the deploy process. Each property should be in the format _name=value_. Separate properties with a new line. | | Optional | CICSplex resource
-cicsbt.directory | The zFS directory where the CICS build toolkit is installed. | /usr/lpp/cicsbt | Yes | CICSplex resource
+cics.bundle.definition.group.name | CSD group name for the BUNDLE resource. | MYGROUP  | Yes | Component
+cics.bundle.definition.name | BUNDLE resource name. | MYBUNDLE | Yes | Component
+cics.bundle.properties | Property names and values used to resolve variables in the CICS bundle during bundle deployment. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFHWLP | Optional | Component
+cics.bundle.version | Bundle version used to define the BUNDLE  resource in CICS. This would typically be set to the same as bundle version in the bundle manifest file META-INF/cics.xml. | 1.0.0 | Yes | Component version
+cics.platform.home | Platform home directory in zFS into which the CICS bundle is copied ready for use by CICS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | Resource
+cics.platform.properties| Property names and values used to resolve variables in the CICS bundle during bundle deployment. Each property should be in the format _name=value_. Separate properties with a new line. | DSN.HLQ=DEV | Optional | Resource
+cicsbt.directory | Directory where the CICS build toolkit is installed. | /usr/lpp/cicsbt | Yes | Resource
 
 ## Example
 
