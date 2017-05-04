@@ -43,8 +43,8 @@ show_help () {
 	echo -e "\t\t\tIf unspecified the CICS bundle ID of the first bundle found is used."
 	echo -e "\t-v, --version\tComponent version name in UCD"
 	echo -e "\t\t\tIf unspecified the CICS bundle version of the first bundle found is used."
-	echo -e "\t-q, --qualifier\tComponent version qualifier"
-	echo -e "\t-r, --replace\tDelete the existing component version in UCD if it exists"
+	echo -e "\t-q, --qualifier\tComponent version name qualifier in UCD"
+	echo -e "\t-r, --replace\tReplace the existing component version in UCD if it exists"
 	echo -e "\t\t\tComponent versions cannot be deleted if they have been deployed."
 	echo
 	echo -e "\tDIRECTORY is the output directory created by the CICS build toolkit to be pushed."

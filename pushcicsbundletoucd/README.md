@@ -10,17 +10,18 @@ Script to push a CICS bundle into IBM UrbanCode Deploy (UCD) as a component vers
 ## Usage
 
 ```
-pushcicsbundletoucd [-hr] [-n COMPONENT_NAME] [-v COMPONENT_VERSION_NAME] [-q VERSION_QUALIFIER] DIRECTORY
+pushcicsbundletoucd [-hr] [-n COMPONENT_NAME] [-v COMPONENT_VERSION_NAME] [-q COMPONENT_VERSION_NAME_QUALIFIER] DIRECTORY
 
 Options:
 
 -h, --help       Help
--n, --name       Component name
-                 If not specified, the CICS bundle ID of the first bundle found is used.
--q, --qualifier  Component version qualifier
--v, --version    Component version name
-                 If not specified, the CICS bundle version of the first bundle found is used.
+-n, --name       Component name in UCD
+                 If unspecified the CICS bundle ID of the first bundle found is used.
+-v, --version    Component version name in UCD
+                 If unspecified the CICS bundle version of the first bundle found is used.
+-q, --qualifier  Component version name qualifier in UCD
 -r, --replace    Replace the existing component version if it exists
+                 Component versions cannot be deleted if they have been deployed.
 
 DIRECTORY is the output directory created by the CICS build toolkit to be pushed.
 ```

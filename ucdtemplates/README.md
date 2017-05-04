@@ -34,7 +34,7 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
     * For a new component: **Components** > **Create Component** > Component Template: `CICS bundle`
     * For an existing component that does not already have a template:  **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
 
-1. Set the template properies.
+1. Set the template properties listed in [Template properties](#Template-properties).
 
     * To set a template property in a component: **Components** > select component > **Basic Settings**
     * To set a property in a component version: This is typicaly set by a build system when the component version is created, otherwise this can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
@@ -42,7 +42,9 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 
 1. Use the processes provided by the template.
 
-    * In an application process: **Applications** > **Processes** > select process > drag **Install Component** step onto process > Component Process: select process such as Deploy (Template).
+    * In an application process: **Applications** > **Processes** > select process > drag an application step such as **Install Component** onto process > Edit the step > Component Process: select process such as Deploy (Template).
+
+**Note:** To avoid failures in inflight workloads, action should be taken to move or stop the workload in the target CICS systems ahead of deploying or undeploying the CICS bundle, and re-enabling the workload once completed. For example in a rolling deployment scenario, the CICS systems in resource _CICS-SYSTEM-GROUP-1_ are removed as available targets for the workload and inflight work is drained. CICS systems in other resources continue processing the workload. The application is then updated in _CICS-SYSTEM-GROUP-1_ and once complete it is added back in as a target for the workload. Then the application similarly be deployed to each of the remaining resource groups in turn. This should allow for a robust, repeatable deployment without outage.
 
 ## Template properties
 
