@@ -34,17 +34,18 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
     * For a new component: **Components** > **Create Component** > Component Template: `CICS bundle`
     * For an existing component that does not already have a template:  **Components** > select the component > **Configuration** > **Basic Settings** > Component Template: `CICS bundle`
 
-1. Set the template properties listed in [Template properties](#Template-properties).
+1. Set the template properties listed in [Template properties](#template-properties).
 
     * To set a template property in a component: **Components** > select component > **Basic Settings**
-    * To set a property in a component version: This is typicaly set by a build system when the component version is created, otherwise this can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
+    * To set a property in a component version: This is typicaly set by a build system when the component version is created, otherwise it can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
+    * To set a property in the component environment: **Applications** > select application > **Environments** > select envronment > **Configuration** > **Environment Properties** >** Component Environment Properties**
     * To set a property in a resource: **Resources** > select resource > **Configuration** > **Resource Properties**
 
 1. Use the processes provided by the template.
 
-    * In an application process: **Applications** > **Processes** > select process > drag an application step such as **Install Component** onto process > Edit the step > Component Process: select process such as Deploy (Template).
+    * In an application process: **Applications** > **Processes** > select process > drag an application step such as **Install Component** onto process > Edit the step > Component Process: select process such as Deploy (Template)
 
-**Note:** To avoid failures in inflight workloads, action should be taken to move or stop the workload in the target CICS systems ahead of deploying or undeploying the CICS bundle, and re-enabling the workload once completed. For example in a rolling deployment scenario, the CICS systems in resource _CICS-SYSTEM-GROUP-1_ are removed as available targets for the workload and inflight work is drained. CICS systems in other resources continue processing the workload. The application is then updated in _CICS-SYSTEM-GROUP-1_ and once complete it is added back in as a target for the workload. Then the application similarly be deployed to each of the remaining resource groups in turn. This should allow for a robust, repeatable deployment without outage.
+**Note:** To avoid failures in inflight workloads, action should be taken to move or stop the workload in the target CICS systems ahead of deploying or undeploying the CICS bundle, and re-enabling the workload once completed. For example in a rolling deployment scenario, the CICS systems in resource _CICS-SYSTEM-GROUP-1_ are removed as available targets for the workload and inflight work is drained. CICS systems in other resources continue processing the workload. The application is then updated in _CICS-SYSTEM-GROUP-1_ and once complete it is added back in as a target for the workload. The application can similarly be deployed to each of the remaining resource groups in turn. This should allow for a robust, repeatable deployment without failures.
 
 ## Template properties
 
@@ -54,9 +55,9 @@ cics.bundle.definition.group.name | CSD group name for the BUNDLE resource. | MY
 cics.bundle.definition.name | BUNDLE resource name. | MYBUNDLE | Yes | Component
 cics.bundle.properties | Property names and values used to resolve variables in the CICS bundle during bundle deployment. Each property should be in the format _name=value_. Separate properties with a new line. | jvmserver=DFHWLP | Optional | Component
 cics.bundle.version | Bundle version used to define the BUNDLE  resource in CICS. This would typically be set to the same as bundle version in the bundle manifest file META-INF/cics.xml. | 1.0.0 | Yes | Component version
-cics.platform.home | Platform home directory in zFS into which the CICS bundle is copied ready for use by CICS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | Resource
-cics.platform.properties| Property names and values used to resolve variables in the CICS bundle during bundle deployment. Each property should be in the format _name=value_. Separate properties with a new line. | DSN.HLQ=DEV | Optional | Resource
-cicsbt.directory | Directory where the CICS build toolkit is installed. | /usr/lpp/cicsbt | Yes | Resource
+cics.platform.home | Platform home directory in zFS into which the CICS bundle is copied ready for use by CICS. See [Preparing zFS for platforms](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.3.0/com.ibm.cics.ts.doc/eyua7/topics/creating_platform_zfsdirectory.html). | /var/cicsts/CICSplex/platform1 | Yes | Ecomponent Environement
+cics.platform.properties| Property names and values used to resolve variables in the CICS bundle during bundle deployment. Each property should be in the format _name=value_. Separate properties with a new line. | DSN.HLQ=DEV | Optional | Component Environment
+cicsbt.directory | Directory where the CICS build toolkit is installed. | /usr/lpp/cicsbt | Yes | Component Environment or Resource
 
 ## Example
 
@@ -76,7 +77,7 @@ cicsbt.directory | Directory where the CICS build toolkit is installed. | /usr/l
     1. **Applications** > select application > **Environments** > **Create Environment**
     1. Select the environment > **Add Base Resources** > select the CICS resources to deploy the application to.
     1. **Configuration** > **Environment Properties** > set the following properties:
-        1. cics.platform.home to the CICS platform home zFS directory where the CICS bundle will be deployed to
+        1. cics.platform.home to the CICS platform home zFS directory where the CICS bundle will be deployed to.
         1. cics.platform.properties to the properties used when resolving all bundles in this environment. This is optional.
     1. **Save**
 1. Create the application processes, such as to deploy and undeploy the application. For example:
