@@ -2,13 +2,12 @@
 
 The CICS bundle component template for IBM UrbanCode Deploy (UCD) provides the following processes to reliably deploy bundles to CICS:
 
-* **Deploy** resolves variables in bundle, undeploys the old version of the BUNDLE resource in CICS, copies the bundle to the CICS platform home, then deploys the BUNDLE resource in CICS.
+* **Deploy** resolves variables in bundle, undeploys the old version of the BUNDLE resource in CICS, copies the bundle to the CICS platform home, then deploys the BUNDLE resource in CICS. You can select if the CICS bundle should be enabled, available, or disabled.
 * **Disable** disables the BUNDLE resource in CICS.
 * **Enable** enables the BUNDLE resource in CICS.
 * **Make available** makes the BUNDLE resource in CICS available.
 * **Make unavailable** makes the BUNDLE resource in CICS unavailable.
-* **Undeploy** undeploys the BUNDLE resource in CICS.
-* **Undeploy and delete** undeploys the BUNDLE resource in CICS, then deletes the bundle from the CICS platform home.
+* **Undeploy** undeploys the BUNDLE resource in CICS. Optionally you can select to delete the bundle from the CICS platform home.
 
 The processes assume the UCD component contains only one CICS bundle.
 
@@ -37,15 +36,15 @@ Import [CICS+bundle.json](CICS+bundle.json) into UCD as a component template.
 1. Set the template properties listed in [Template properties](#template-properties).
 
     * To set a template property in a component: **Components** > select component > **Basic Settings**
-    * To set a property in a component version: This is typicaly set by a build system when the component version is created, otherwise it can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
-    * To set a property in the component environment: **Applications** > select application > **Environments** > select envronment > **Configuration** > **Environment Properties** >** Component Environment Properties**
+    * To set a property in a component version: This is typicaly set by a build system or UCD after it creates the component version, otherwise it can be set manually via **Components** > select component > **Versions** > select version > **Configuration** > **Version Properties**
+    * To set a property in the component environment: **Applications** > select application > **Environments** > select envronment > **Configuration** > **Environment Properties** > **Component Environment Properties**
     * To set a property in a resource: **Resources** > select resource > **Configuration** > **Resource Properties**
 
 1. Use the processes provided by the template.
 
-    * In an application process: **Applications** > **Processes** > select process > drag an application step such as **Install Component** onto process > Edit the step > Component Process: select process such as Deploy (Template)
+    * In an application process: **Applications** > **Processes** > select process > drag an application step such as **Install Component** onto the process > edit the step > Component Process: select a process such as `Deploy (Template)`
 
-**Note:** To avoid failures in inflight workloads, action should be taken to move or stop the workload in the target CICS systems ahead of deploying or undeploying the CICS bundle, and re-enabling the workload once completed. For example in a rolling deployment scenario, the CICS systems in resource _CICS-SYSTEM-GROUP-1_ are removed as available targets for the workload and inflight work is drained. CICS systems in other resources continue processing the workload. The application is then updated in _CICS-SYSTEM-GROUP-1_ and once complete it is added back in as a target for the workload. The application can similarly be deployed to each of the remaining resource groups in turn. This should allow for a robust, repeatable deployment without failures.
+**Note:** To avoid failures in inflight workloads, action should be taken to move or stop the workload in the target CICS systems ahead of deploying or undeploying the CICS bundle, and re-enabling the workload once completed. For example in a rolling deployment scenario, the CICS systems in resource group _CICS-SYSTEM-GROUP-1_ are removed as available targets for the workload and inflight work is drained. CICS systems in other resources groups continue processing the workload. The application is then updated in _CICS-SYSTEM-GROUP-1_ and once complete it is added back in as a target for the workload. The application can similarly be deployed to each of the remaining resource groups in turn. This should allow for a robust, repeatable deployment without failures.
 
 ## Template properties
 
