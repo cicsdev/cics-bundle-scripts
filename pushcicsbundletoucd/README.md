@@ -36,7 +36,7 @@ DIRECTORY is the output directory created by the CICS build toolkit to be pushed
 
     **File** > **New** > **CICS Bundle Project** > **Project name:** `com.example.service` > **Finish**
 
-1. Export the CICS bundle ready for building using the CICS Explorer.
+1. Export the CICS bundle as an Eclipse project using CICS Explorer ready for building.
 
     **File** > **Export..** > **File System** > select the project > To directory: `/build/input` > **Finish**
 
