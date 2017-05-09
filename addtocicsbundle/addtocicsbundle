@@ -15,7 +15,7 @@ show_usage () {
 show_help () {
 	show_usage
 	echo
-	echo "Add Java files to the CICS bundle specified by DIRECTORY."
+	echo "Add Java pre-built archive files to the CICS bundle specified by DIRECTORY."
 	echo
 	echo "Options:"
 	echo -e "\t-a FILES, --add\t\t\tFiles or directory of files to add to the CICS bundle"
