@@ -12,7 +12,7 @@ If the CICS bundle does not exist, it will be created. If the CICS bundle contai
 ## Requirements
 
 * [bash](https://www.gnu.org/software/bash/bash.html?cm_mc_uid=33935548072714933125385&cm_mc_sid_50200000=1493879051&cm_mc_sid_52640000=1493879738#downloading) is used to run the script. For Linux this is likely pre-installed.
-* [xmlstarlet](http://xmlstar.sourceforge.net/overview.php) used to update the CICS bundle menifest file cics.xml.
+* [xmlstarlet](http://xmlstar.sourceforge.net/overview.php) used to update the CICS bundle manifest file cics.xml.
  
 ## Usage
  
