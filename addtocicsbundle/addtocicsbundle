@@ -1,6 +1,6 @@
 #!/bin/bash
 #############################################################################################
-# Script to add Java parts to a CICS bundle
+# Script to add pre-build Java archive files to a CICS bundle
 #
 # Licensed Materials - Property of IBM.
 # (c) Copyright IBM Corporation 2017. All Rights Reserved.
@@ -9,7 +9,7 @@
 #############################################################################################
 
 show_usage () {
-	echo -e "Usage:\t"$(basename "$0") "[-hv] [-j JVMSERVER] -a FILES DIRECTORY"
+	echo -e "Usage:\t"$(basename "$0") "[-hv] [-j JVMSERVER] [-V VERSION] -a FILES DIRECTORY"
 }
 
 show_help () {
@@ -19,9 +19,10 @@ show_help () {
 	echo
 	echo "Options:"
 	echo -e "\t-a FILES, --add\t\t\tFiles or directory of files to add to the CICS bundle"
+	echo -e "\t-h, --help\t\t\tHelp"
 	echo -e "\t-j JVMSERVER, --jvmserver\tCICS JVMSERVER resource name"
 	echo -e "\t\t\t\t\tThe default is DFHWLP for files with .war .ear .eba extensions, and DFHOSGI .jar extensions"
-	echo -e "\t-h, --help\t\t\tHelp"
+	echo -e "\t-V, --version\t\t\tSet the bundle version in major.minor.micro format"
 	echo -e "\t-v, --verbose\t\t\tVerbose messages"
 	echo -e "\tDIRECTORY is the CICS bundle directory"
 }
@@ -29,7 +30,7 @@ show_help () {
 # Function to create an empty CICS bundle
 create_bundle() {
 	# Create the CICS bundle directory
-	echo "Creating empty CICS bundle at ${DIRECTORY}"
+	echo "Creating directory ${MANIFEST_DIRECTORY}"
 	mkdir -p "$MANIFEST_DIRECTORY"
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
@@ -39,13 +40,10 @@ create_bundle() {
 	
 	# Create the CICS bundle manifest file
 	MANIFEST_TIMESTAMP=$(date +"%Y-%m-%dT%T.%3N%:z")
-	MANIFEST_BUNDLEMAJORVER="1"
-	MANIFEST_BUNDLEMINORVER="0"
-	MANIFEST_BUNDLEMICROVER="0"
 
 	cat > "${MANIFEST}" <<EOF
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="$MANIFEST_ID" bundleMajorVer="$MANIFEST_BUNDLEMAJORVER" bundleMinorVer="$MANIFEST_BUNDLEMINORVER" bundleMicroVer="$MANIFEST_BUNDLEMICROVER" bundleVersion="1" bundleRelease="0">
+<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="${SYMBOLICNAME}" bundleMajorVer="1" bundleMinorVer="0" bundleMicroVer="0" bundleVersion="1" bundleRelease="0">
     <meta_directives>
         <timestamp>$MANIFEST_TIMESTAMP</timestamp>
     </meta_directives>
@@ -59,24 +57,22 @@ add_file_to_cics_bundle() {
 	FILEEXTENSION="${FILENAME##*.}"
 		
 	if [[ "$FILEEXTENSION" = "jar" ]] ; then
+		# Use the OSGi manifest symbolic name and bundle version as the defaults for the CICS bundle
 		SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
 		BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
+		echo "Found symbolic name ${SYMBOLICNAME} VERSION ${BUNDLEPARTVERSION}"
+
+		if [[ -z "${BUNDLEVERSION}" ]] ; then
+			BUNDLEVERSION="${BUNDLEPARTVERSION}"
+		fi
 	else
 		SYMBOLICNAME="${FILENAME%.*}"
 	fi
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
-		MANIFEST_ID="${SYMBOLICNAME}"
 		create_bundle
-	elif [[ -z "${MANIFEST_ID}" ]] ; then
-		MANIFEST_ID=$(xmllint --xpath "string(//@id)" $MANIFEST)
 	fi
 	
-	if [[ $VERBOSE == 1 ]] ; then
-		echo "Copying file ${FILE} to ${DIRECTORY}"
-	fi
-	cp "${FILE}" "${DIRECTORY}"
-
 	# Set bundle part JVMSERVER
 	if [[ -z "${JVMSERVER}" ]] ; then
 		if [[ "${FILEEXTENSION}" -eq "jar" ]] ; then
@@ -96,35 +92,58 @@ add_file_to_cics_bundle() {
     		;;
     	"war")
     		BUNDLEPARTEXTENSION="warbundle"
-			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
     		;;
     	"ear")
     		BUNDLEPARTEXTENSION="earbundle"
-			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
     		;;
     	"eba")
     		BUNDLEPARTEXTENSION="ebabundle"
-			BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
     		;;
     	*)
-    	    BUNDLEPARTEXTENSION=""
-    	    ;;
+    		BUNDLEPARTEXTENSION=""
+		;;
 	esac
 	
 	if [[ -z "${BUNDLEPARTEXTENSION}" ]] ; then
 		# Do not create a CICS bundle part if it was not a recognised type
-		exit
+		exit 8
 	fi
 
 	BUNDLEPARTTYPE="http://www.ibm.com/xmlns/prod/cics/bundle/${BUNDLEPARTEXTENSION^^}"
 	BUNDLEPARTFILE=${DIRECTORY}/${FILENAME}.${BUNDLEPARTEXTENSION}
-	echo "Creating CICS bundle part file ${BUNDLEPARTFILE}"
+
+	# Check if bundle part already exists
+	ENTRY=$(xmlstarlet sel -t -c '//_:define[@name="'"${FILENAME}"'"][@type="'"${BUNDLEPARTTYPE}"'"]' "${MANIFEST}")
+	if [[ ! -z "${ENTRY}" ]] ; then
+		echo "Error - CICS bundle part ${FILENAME} for type ${BUNDLEPARTTYPE} in ${MANIFEST} already exists"
+		exit 8
+	fi
+
+	# Create bundle part file
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Creating file ${BUNDLEPARTFILE}"
+	fi
 	echo "${BUNDLEPART}" > "${BUNDLEPARTFILE}" 
 
    	# Add part to the CICS bundle manifest
-   	BUNDLEPART='    <define name="'${FILENAME}'" type="'${BUNDLEPARTTYPE}'" path="'${FILENAME}'.'${BUNDLEPARTEXTENSION}'"/>'
-   	sed -i '/<\/manifest>/i\'"$BUNDLEPART" "${MANIFEST}"
-   	
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Adding bundle part file to the manifest file ${MANIFEST}"
+	fi
+	xmlstarlet ed -L -s //_:manifest -t elem -n define -v "" \
+		-i //_:manifest/define -t attr -n name -v "${FILENAME}" \
+		-i //_:manifest/define -t attr -n type -v "${BUNDLEPARTTYPE}" \
+		-i //_:manifest/define -t attr -n path -v "${FILENAME}.${BUNDLEPARTEXTENSION}" \
+		"${MANIFEST}"
+
+	# Copy file to be added into CICS bundle
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Copying file ${FILE} to ${DIRECTORY}"
+	fi
+	cp "${FILE}" "${DIRECTORY}"
+
 	SYMBOLICNAME=""
 }
 
@@ -140,12 +159,38 @@ add_files_to_cics_bundle() {
 
 		TOTALRC=$((TOTALRC + RC))
 	done
-	
-	if [[ $VERBOSE == 1 ]] ; then
-		echo
-		echo "Summary for directory:"
-		ls -lR ${DIRECTORY}
+}
+
+# Function to set the cics_bundle version
+set_cics_bundle_version() { 
+	# Validate VERSION parameter
+	BUNDLEVERSIONARRAY=($(echo ${BUNDLEVERSION} | tr '.' ' '))
+	BUNDLEMAJORVER=${BUNDLEVERSIONARRAY[0]}
+	BUNDLEMINORVER=${BUNDLEVERSIONARRAY[1]}
+	BUNDLEMICROVER=${BUNDLEVERSIONARRAY[2]}
+	if [[ -z "$BUNDLEMAJORVER" ]]; then
+		BUNDLEMAJORVER="0"
 	fi
+	if [[ -z "$BUNDLEMINORVER" ]]; then
+		BUNDLEMINORVER="0"
+	fi
+	if [[ -z "$BUNDLEMICROVER" ]]; then
+		BUNDLEMICROVER="0"
+	fi
+	if [[ ! "$BUNDLEVERSION" == "$BUNDLEMAJORVER.$BUNDLEMINORVER.$BUNDLEMICROVER" ]]; then
+		echo "Bundle version ${BUNDLEVERSION} is not in the required major.minor.micro format"
+		exit 12
+	fi
+
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Setting CICS bundle version to ${BUNDLEVERSION}"
+	fi
+	
+	xmlstarlet edit -L \
+		-u "//@bundleMajorVer" -v ${BUNDLEMAJORVER} \
+		-u "//@bundleMinorVer" -v ${BUNDLEMINORVER} \
+		-u "//@bundleMicroVer" -v ${BUNDLEMICROVER} \
+		"${MANIFEST}"
 }
 
 # Process script long options by transforming them to the short option equivalent
@@ -156,6 +201,8 @@ for arg in "$@" ; do
     		set -- "$@" "-a" ;;
     	"--jvmserver")
     		set -- "$@" "-j" ;;
+    	"--version")
+    		set -- "$@" "-V" ;;
     	"--verbose")
     		set -- "$@" "-v" ;;
     	"--help")
@@ -167,12 +214,14 @@ done
 
 # Process script short options
 VERBOSE=0
-while getopts ":a:j:vh" opt ; do
+while getopts ":a:j:V:vh" opt ; do
 	case "$opt" in
 		a)
 			FILES=${OPTARG} ;;
 		j)
 			JVMSERVER=${OPTARG} ;;
+		V)
+			BUNDLEVERSION=${OPTARG} ;;
 		v)
 			VERBOSE=1 ;;
 		h)
@@ -209,14 +258,21 @@ elif [[ ! -d "${DIRECTORY}" ]] ; then
 	# Directory will be created later
 	:
 elif [[ ! -f "${MANIFEST}" ]] ; then
-	echo "${DIRECTORY} directory is not a CICS bundle"
+	echo "Canot find manifest at ${MANIFEST}"
 	show_usage
 	exit 1
 fi
 
 add_files_to_cics_bundle
 
+if [[ ! -z "${BUNDLEVERSION}" ]] ; then
+	set_cics_bundle_version
+fi
+
 if [[ $VERBOSE == 1 ]] ; then
+	echo "Summary for directory:"
+	ls -lR ${DIRECTORY}
+
 	echo "Exiting with RC=${TOTALRC}"
 fi
 exit ${TOTALRC}

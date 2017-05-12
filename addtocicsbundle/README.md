@@ -1,4 +1,4 @@
-# tagcicsbundle
+# addtocicsbundle
 
 Script to add pre-build Java archive files to a CICS bundle, including:
 
@@ -11,8 +11,8 @@ If the CICS bundle does not exist, it will be created. If the CICS bundle contai
  
 ## Requirements
 
-* [bash](https://www.gnu.org/software/bash/bash.html?cm_mc_uid=33935548072714933125385&cm_mc_sid_50200000=1493879051&cm_mc_sid_52640000=1493879738#downloading) is used to run the script. For Linux this is likely pre-installed. For z/OS it is available from [Ported Tools](https://www-03.ibm.com/systems/z/os/zos/features/unix/bpxa1ty1.html).
-* [sed](https://www.gnu.org/software/sed/manual/sed.html) stream editor. Used to update the CICS manifest. Typically pre-installed on Linux and [z/OS](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.bpxa400/bpxug375.htm).
+* [bash](https://www.gnu.org/software/bash/bash.html?cm_mc_uid=33935548072714933125385&cm_mc_sid_50200000=1493879051&cm_mc_sid_52640000=1493879738#downloading) is used to run the script. For Linux this is likely pre-installed.
+* [xmlstarlet](http://xmlstar.sourceforge.net/overview.php) used to update the CICS bundle menifest file cics.xml.
  
 ## Usage
  
@@ -24,9 +24,10 @@ Add Java pre-built archive files to the CICS bundle specified by DIRECTORY.
 Options:
 
 -a FILES, --add            Files or directory of files to add to the CICS bundle
+-h, --help                 Help
 -j JVMSERVER, --jvmserver  CICS JVMSERVER resource name
                            The default is DFHWLP for files with .war .ear .eba extensions, and DFHOSGI .jar extensions
--h, --help                 Help
+-V, --version              Set the bundle version in major.minor.micro format
 -v, --verbose              Verbose messages
 
 DIRECTORY is the CICS bundle directory
