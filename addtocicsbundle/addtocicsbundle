@@ -22,7 +22,7 @@ show_help () {
 	echo -e "\t-h, --help\t\t\tHelp"
 	echo -e "\t-j JVMSERVER, --jvmserver\tCICS JVMSERVER resource name"
 	echo -e "\t\t\t\t\tThe default is DFHWLP for files with .war .ear .eba extensions, and DFHOSGI .jar extensions"
-	echo -e "\t-V, --version\t\t\tSet the bundle version in major.minor.micro format"
+	echo -e "\t-V VERSION, --version\t\tSet the bundle version in major.minor.micro format"
 	echo -e "\t-v, --verbose\t\t\tVerbose messages"
 	echo -e "\tDIRECTORY is the CICS bundle directory"
 }
