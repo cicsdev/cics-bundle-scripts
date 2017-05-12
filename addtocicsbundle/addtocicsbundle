@@ -1,6 +1,6 @@
 #!/bin/bash
 #############################################################################################
-# Script to add pre-build Java archive files to a CICS bundle
+# Script to add Java parts to a CICS bundle
 #
 # Licensed Materials - Property of IBM.
 # (c) Copyright IBM Corporation 2017. All Rights Reserved.
@@ -60,7 +60,6 @@ add_file_to_cics_bundle() {
 		# Use the OSGi manifest symbolic name and bundle version as the defaults for the CICS bundle
 		SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
 		BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
-		echo "Found symbolic name ${SYMBOLICNAME} VERSION ${BUNDLEPARTVERSION}"
 
 		if [[ -z "${BUNDLEVERSION}" ]] ; then
 			BUNDLEVERSION="${BUNDLEPARTVERSION}"
