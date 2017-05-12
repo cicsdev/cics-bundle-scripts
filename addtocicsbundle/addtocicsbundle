@@ -31,7 +31,7 @@ show_help () {
 create_bundle() {
 	# Create the CICS bundle directory
 	echo "Creating directory ${MANIFEST_DIRECTORY}"
-	mkdir -p "$MANIFEST_DIRECTORY"
+	mkdir -p "${MANIFEST_DIRECTORY}"
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
 		echo "Could not create directory ${MANIFEST_DIRECTORY}"
@@ -56,7 +56,7 @@ add_file_to_cics_bundle() {
 	FILENAME=$(basename "${FILE}")
 	FILEEXTENSION="${FILENAME##*.}"
 		
-	if [[ "$FILEEXTENSION" = "jar" ]] ; then
+	if [[ "${FILEEXTENSION}" = "jar" ]] ; then
 		# Use the OSGi manifest symbolic name and bundle version as the defaults for the CICS bundle
 		SYMBOLICNAME=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-SymbolicName" | cut -d ":" -f 2 | tr -d '[:space:]')
 		BUNDLEPARTVERSION=$(unzip -p "${FILE}" "META-INF/MANIFEST.MF" | grep "Bundle-Version" | cut -d ":" -f 2 | tr -d '[:space:]')
@@ -112,7 +112,7 @@ add_file_to_cics_bundle() {
 	fi
 
 	BUNDLEPARTTYPE="http://www.ibm.com/xmlns/prod/cics/bundle/${BUNDLEPARTEXTENSION^^}"
-	BUNDLEPARTFILE=${DIRECTORY}/${FILENAME}.${BUNDLEPARTEXTENSION}
+	BUNDLEPARTFILE="${DIRECTORY}/${FILENAME}.${BUNDLEPARTEXTENSION}"
 
 	# Check if bundle part already exists
 	ENTRY=$(xmlstarlet sel -t -c '//_:define[@name="'"${FILENAME}"'"][@type="'"${BUNDLEPARTTYPE}"'"]' "${MANIFEST}")
@@ -131,10 +131,10 @@ add_file_to_cics_bundle() {
 	if [[ $VERBOSE == 1 ]] ; then
 		echo "Adding bundle part file to the manifest file ${MANIFEST}"
 	fi
-	xmlstarlet ed -L -s //_:manifest -t elem -n define -v "" \
-		-i //_:manifest/define -t attr -n name -v "${FILENAME}" \
-		-i //_:manifest/define -t attr -n type -v "${BUNDLEPARTTYPE}" \
-		-i //_:manifest/define -t attr -n path -v "${FILENAME}.${BUNDLEPARTEXTENSION}" \
+	xmlstarlet ed -L -s "//_:manifest" -t elem -n define -v "" \
+		-i "//_:manifest/define" -t attr -n name -v "${FILENAME}" \
+		-i "//_:manifest/define" -t attr -n type -v "${BUNDLEPARTTYPE}" \
+		-i "//_:manifest/define" -t attr -n path -v "${FILENAME}.${BUNDLEPARTEXTENSION}" \
 		"${MANIFEST}"
 
 	# Copy file to be added into CICS bundle
@@ -152,7 +152,7 @@ add_files_to_cics_bundle() {
 		MESSAGE=$(add_file_to_cics_bundle "${FILE}")
 		RC=$?
   
-		if [[ ! -z ${MESSAGE} ]] ; then 
+		if [[ ! -z "${MESSAGE}" ]] ; then 
 			echo -n -e "${MESSAGE}\n"
 		fi
 
@@ -167,16 +167,16 @@ set_cics_bundle_version() {
 	BUNDLEMAJORVER=${BUNDLEVERSIONARRAY[0]}
 	BUNDLEMINORVER=${BUNDLEVERSIONARRAY[1]}
 	BUNDLEMICROVER=${BUNDLEVERSIONARRAY[2]}
-	if [[ -z "$BUNDLEMAJORVER" ]]; then
+	if [[ -z "${BUNDLEMAJORVER}" ]]; then
 		BUNDLEMAJORVER="0"
 	fi
-	if [[ -z "$BUNDLEMINORVER" ]]; then
+	if [[ -z "${BUNDLEMINORVER}" ]]; then
 		BUNDLEMINORVER="0"
 	fi
-	if [[ -z "$BUNDLEMICROVER" ]]; then
+	if [[ -z "${BUNDLEMICROVER}" ]]; then
 		BUNDLEMICROVER="0"
 	fi
-	if [[ ! "$BUNDLEVERSION" == "$BUNDLEMAJORVER.$BUNDLEMINORVER.$BUNDLEMICROVER" ]]; then
+	if [[ ! "${BUNDLEVERSION}" == "${BUNDLEMAJORVER}.${BUNDLEMINORVER}.${BUNDLEMICROVER}" ]]; then
 		echo "Bundle version ${BUNDLEVERSION} is not in the required major.minor.micro format"
 		exit 12
 	fi
@@ -186,9 +186,9 @@ set_cics_bundle_version() {
 	fi
 	
 	xmlstarlet edit -L \
-		-u "//@bundleMajorVer" -v ${BUNDLEMAJORVER} \
-		-u "//@bundleMinorVer" -v ${BUNDLEMINORVER} \
-		-u "//@bundleMicroVer" -v ${BUNDLEMICROVER} \
+		-u "//@bundleMajorVer" -v "${BUNDLEMAJORVER}" \
+		-u "//@bundleMinorVer" -v "${BUNDLEMINORVER}" \
+		-u "//@bundleMicroVer" -v "${BUNDLEMICROVER}" \
 		"${MANIFEST}"
 }
 
@@ -216,11 +216,11 @@ VERBOSE=0
 while getopts ":a:j:V:vh" opt ; do
 	case "$opt" in
 		a)
-			FILES=${OPTARG} ;;
+			FILES="${OPTARG}" ;;
 		j)
-			JVMSERVER=${OPTARG} ;;
+			JVMSERVER="${OPTARG}" ;;
 		V)
-			BUNDLEVERSION=${OPTARG} ;;
+			BUNDLEVERSION="${OPTARG}" ;;
 		v)
 			VERBOSE=1 ;;
 		h)
