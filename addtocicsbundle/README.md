@@ -37,7 +37,7 @@ DIRECTORY is the CICS bundle directory
 
 This example will create a CICS bundle in directory bundles/MyBundle and add *.war web archive files that will be installed into the JVM sserver called DFHWLP.
 
-Note the `-a "*war"` parameter includes quotation marks to avoid the shell interpreter expansion.
+Note the `-a "*.jar"` parameter includes quotation marks to avoid the shell interpreter expansion.
 
 ~~~~console
 $ addtocicsbundle -v -j DFHWLP -a "*.jar" bundles/com.example.mybundle
