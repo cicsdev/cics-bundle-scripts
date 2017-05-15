@@ -35,37 +35,44 @@ DIRECTORY is the CICS bundle directory
 
 ## Example
 
-This example will create a CICS bundle in directory bundles/MyBundle and add *.war web archive files that will be installed into the JVM sserver called DFHWLP.
+This example will create a CICS bundle in directory output/bundles/com.ibm.cics.server.examples.bundle and add *.jar and *.war archive files.
 
-Note the `-a "*.jar"` parameter includes quotation marks to avoid the shell interpreter expansion.
+Note the `-a "javaarchives/*"` parameter includes quotation marks to avoid the shell interpreter expansion.
 
 ~~~~console
-$ addtocicsbundle -v -j DFHWLP -a "*.jar" bundles/com.example.mybundle
-
-Creating directory bundles/com.example.mybundle/META-INF
-Creating file bundles/com.example.mybundle/com.ibm.cics.server.examples.hello_1.0.0.jar.osgibundle
-Adding bundle part file to the manifest file bundles/com.example.mybundle/META-INF/cics.xml
-Copying file com.ibm.cics.server.examples.hello_1.0.0.jar to bundles/com.example.mybundle
-Creating file bundles/com.example.mybundle/com.ibm.cics.server.examples.jcics_1.0.0.jar.osgibundle
-Adding bundle part file to the manifest file bundles/com.example.mybundle/META-INF/cics.xml
-Copying file com.ibm.cics.server.examples.jcics_1.0.0.jar to bundles/com.example.mybundle
-Creating file bundles/com.example.mybundle/com.ibm.cics.server.examples.web_1.0.0.jar.osgibundle
-Adding bundle part file to the manifest file bundles/com.example.mybundle/META-INF/cics.xml
-Copying file com.ibm.cics.server.examples.web_1.0.0.jar to bundles/com.example.mybundle
+$ addtocicsbundle -v -a "javaarchives/*" output/bundles/com.ibm.cics.server.examples.bundle
+Creating CICS bundle manifest file output/bundles/com.ibm.cics.server.examples.bundle/META-INF/cics.xml
+Creating CICS bundle part file output/bundles/com.ibm.cics.server.examples.bundle/com.ibm.cics.server.examples.hello.osgibundle
+Adding bundle part to the CICS bundle manifest file output/bundles/com.ibm.cics.server.examples.bundle/META-INF/cics.xml
+Adding property jvmserver.DFHOSGI=DFHOSGI to output/bundles/com.ibm.cics.server.examples.bundle/variable.properties
+Copying file javaarchives/com.ibm.cics.server.examples.hello_1.0.0.jar to output/bundles/com.ibm.cics.server.examples.bundle
+Creating CICS bundle part file output/bundles/com.ibm.cics.server.examples.bundle/com.ibm.cics.server.examples.jcics.osgibundle
+Adding bundle part to the CICS bundle manifest file output/bundles/com.ibm.cics.server.examples.bundle/META-INF/cics.xml
+Copying file javaarchives/com.ibm.cics.server.examples.jcics_1.0.0.jar to output/bundles/com.ibm.cics.server.examples.bundle
+Creating CICS bundle part file output/bundles/com.ibm.cics.server.examples.bundle/com.ibm.cics.server.examples.web.osgibundle
+Adding bundle part to the CICS bundle manifest file output/bundles/com.ibm.cics.server.examples.bundle/META-INF/cics.xml
+Copying file javaarchives/com.ibm.cics.server.examples.web_1.0.0.jar to output/bundles/com.ibm.cics.server.examples.bundle
+Creating CICS bundle part file output/bundles/com.ibm.cics.server.examples.bundle/com.ibm.cics.server.examples.wlp.hello.warbundle
+Adding bundle part to the CICS bundle manifest file output/bundles/com.ibm.cics.server.examples.bundle/META-INF/cics.xml
+Adding property jvmserver.DFHWLP=DFHWLP to output/bundles/com.ibm.cics.server.examples.bundle/variable.properties
+Copying file javaarchives/com.ibm.cics.server.examples.wlp.hello.war to output/bundles/com.ibm.cics.server.examples.bundle
 Summary for directory:
-bundles/com.example.mybundle:
-total 44
--rw-r--r-- 1 cockerma cockerma  2124 May 12 04:54 com.ibm.cics.server.examples.hello_1.0.0.jar
--rw-r--r-- 1 cockerma cockerma   156 May 12 04:54 com.ibm.cics.server.examples.hello_1.0.0.jar.osgibundle
--rw-r--r-- 1 cockerma cockerma 15977 May 12 04:54 com.ibm.cics.server.examples.jcics_1.0.0.jar
--rw-r--r-- 1 cockerma cockerma   156 May 12 04:54 com.ibm.cics.server.examples.jcics_1.0.0.jar.osgibundle
--rw-r--r-- 1 cockerma cockerma  5841 May 12 04:54 com.ibm.cics.server.examples.web_1.0.0.jar
--rw-r--r-- 1 cockerma cockerma   154 May 12 04:54 com.ibm.cics.server.examples.web_1.0.0.jar.osgibundle
-drwxr-xr-x 2 cockerma cockerma  4096 May 12 04:54 META-INF
+output/bundles/com.ibm.cics.server.examples.bundle:
+total 112
+-rw-r--r-- 1 cockerma cockerma  2124 May 15 15:23 com.ibm.cics.server.examples.hello_1.0.0.jar
+-rw-r--r-- 1 cockerma cockerma   169 May 15 15:23 com.ibm.cics.server.examples.hello.osgibundle
+-rw-r--r-- 1 cockerma cockerma 15977 May 15 15:23 com.ibm.cics.server.examples.jcics_1.0.0.jar
+-rw-r--r-- 1 cockerma cockerma   169 May 15 15:23 com.ibm.cics.server.examples.jcics.osgibundle
+-rw-r--r-- 1 cockerma cockerma  5841 May 15 15:23 com.ibm.cics.server.examples.web_1.0.0.jar
+-rw-r--r-- 1 cockerma cockerma   167 May 15 15:23 com.ibm.cics.server.examples.web.osgibundle
+-rw-r--r-- 1 cockerma cockerma 60618 May 15 15:23 com.ibm.cics.server.examples.wlp.hello.war
+-rw-r--r-- 1 cockerma cockerma   155 May 15 15:23 com.ibm.cics.server.examples.wlp.hello.warbundle
+drwxr-xr-x 2 cockerma cockerma  4096 May 15 15:23 META-INF
+-rw-r--r-- 1 cockerma cockerma   122 May 15 15:23 variable.properties
 
-bundles/com.example.mybundle/META-INF:
+output/bundles/com.ibm.cics.server.examples.bundle/META-INF:
 total 4
--rw-r--r-- 1 cockerma cockerma 917 May 12 04:54 cics.xml
+-rw-r--r-- 1 cockerma cockerma 1064 May 15 15:23 cics.xml
 Exiting with RC=0
 ~~~~
 

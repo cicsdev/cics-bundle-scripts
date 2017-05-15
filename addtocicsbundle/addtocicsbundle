@@ -1,6 +1,6 @@
 #!/bin/bash
 #############################################################################################
-# Script to add Java parts to a CICS bundle
+# Script to add Java pre-built arhcive files to a CICS bundle
 #
 # Licensed Materials - Property of IBM.
 # (c) Copyright IBM Corporation 2017. All Rights Reserved.
@@ -30,17 +30,20 @@ show_help () {
 # Function to create an empty CICS bundle
 create_bundle() {
 	# Create the CICS bundle directory
-	echo "Creating directory ${MANIFEST_DIRECTORY}"
 	mkdir -p "${MANIFEST_DIRECTORY}"
 	
 	if [[ ! -d "${DIRECTORY}" ]] ; then
-		echo "Could not create directory ${MANIFEST_DIRECTORY}"
+		echo "Could not create CICS bundle manifest directory ${MANIFEST_DIRECTORY}"
 		exit 1
 	fi
 	
 	# Create the CICS bundle manifest file
 	MANIFEST_TIMESTAMP=$(date +"%Y-%m-%dT%T.%3N%:z")
 
+	if [[ $VERBOSE == 1 ]] ; then
+		echo "Creating CICS bundle manifest file ${MANIFEST}"
+	fi
+	
 	cat > "${MANIFEST}" <<EOF
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="${SYMBOLICNAME}" bundleMajorVer="1" bundleMinorVer="0" bundleMicroVer="0" bundleVersion="1" bundleRelease="0">
@@ -50,6 +53,17 @@ create_bundle() {
 </manifest>
 EOF
 } 
+
+# Get the value from a property in a .properties file
+# Modified technique from http://shrubbery.homeip.net/c/display/W/Reading+Java-style+Properties+Files+with+Shell
+get_property () {
+	# If properties file does not exist, just exit
+	if [[ ! -f $2 ]] ; then
+		exit
+	fi
+	
+	echo `sed '/^\#/d' $2 | grep "${1}*=" | tail -n 1 | cut -d "=" -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'`
+}
 
 # Function to add a file to a CICS bundle
 add_file_to_cics_bundle() { 
@@ -72,9 +86,9 @@ add_file_to_cics_bundle() {
 		create_bundle
 	fi
 	
-	# Set bundle part JVMSERVER
+	# Set the bundle part JVMSERVER
 	if [[ -z "${JVMSERVER}" ]] ; then
-		if [[ "${FILEEXTENSION}" -eq "jar" ]] ; then
+		if [[ "${FILEEXTENSION}" = "jar" ]] ; then
 			BUNDLEPARTJVMSERVER="DFHOSGI"
 		else
 			BUNDLEPARTJVMSERVER="DFHWLP"
@@ -82,24 +96,25 @@ add_file_to_cics_bundle() {
 	else
 		BUNDLEPARTJVMSERVER="${JVMSERVER}"
 	fi
+	BUNDLEPARTJVMSERVERPROPERTY="jvmserver.${BUNDLEPARTJVMSERVER}"
 
 	# Relate the file type to the CICS bundle part type
   	case "${FILEEXTENSION}" in
     	"jar")
     		BUNDLEPARTEXTENSION="osgibundle"
-    		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" version="'${BUNDLEPARTVERSION}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+    		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" version="'${BUNDLEPARTVERSION}'" jvmserver="${'${BUNDLEPARTJVMSERVERPROPERTY}'}"/>'
     		;;
     	"war")
     		BUNDLEPARTEXTENSION="warbundle"
-		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="${'${BUNDLEPARTJVMSERVERPROPERTY}'}"/>'
     		;;
     	"ear")
     		BUNDLEPARTEXTENSION="earbundle"
-		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="${'${BUNDLEPARTJVMSERVERPROPERTY}'}"/>'
     		;;
     	"eba")
     		BUNDLEPARTEXTENSION="ebabundle"
-		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="'${BUNDLEPARTJVMSERVER}'"/>'
+		BUNDLEPART=$'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<'${BUNDLEPARTEXTENSION}' symbolicname="'${SYMBOLICNAME}'" jvmserver="${'${BUNDLEPARTJVMSERVERPROPERTY}'}"/>'
     		;;
     	*)
     		BUNDLEPARTEXTENSION=""
@@ -112,30 +127,45 @@ add_file_to_cics_bundle() {
 	fi
 
 	BUNDLEPARTTYPE="http://www.ibm.com/xmlns/prod/cics/bundle/${BUNDLEPARTEXTENSION^^}"
-	BUNDLEPARTFILE="${DIRECTORY}/${FILENAME}.${BUNDLEPARTEXTENSION}"
+	BUNDLEPARTFILE="${DIRECTORY}/${SYMBOLICNAME}.${BUNDLEPARTEXTENSION}"
 
 	# Check if bundle part already exists
-	ENTRY=$(xmlstarlet sel -t -c '//_:define[@name="'"${FILENAME}"'"][@type="'"${BUNDLEPARTTYPE}"'"]' "${MANIFEST}")
+	ENTRY=$(xmlstarlet sel -t -c '//_:define[@name="'"${SYMBOLICNAME}"'"][@type="'"${BUNDLEPARTTYPE}"'"]' "${MANIFEST}")
 	if [[ ! -z "${ENTRY}" ]] ; then
-		echo "Error - CICS bundle part ${FILENAME} for type ${BUNDLEPARTTYPE} in ${MANIFEST} already exists"
-		exit 8
-	fi
+		if [[ $VERBOSE == 1 ]] ; then
+			echo "CICS bundle part ${SYMBOLICNAME} for type ${BUNDLEPARTTYPE} in ${MANIFEST} already exists"
+		fi
+	else
+		# Create bundle part file
+		if [[ $VERBOSE == 1 ]] ; then
+			echo "Creating CICS bundle part file ${BUNDLEPARTFILE}"
+		fi
+		echo "${BUNDLEPART}" > "${BUNDLEPARTFILE}"
 
-	# Create bundle part file
-	if [[ $VERBOSE == 1 ]] ; then
-		echo "Creating file ${BUNDLEPARTFILE}"
-	fi
-	echo "${BUNDLEPART}" > "${BUNDLEPARTFILE}" 
+	   	# Add part to the CICS bundle manifest
+		if [[ $VERBOSE == 1 ]] ; then
+			echo "Adding bundle part to the CICS bundle manifest file ${MANIFEST}"
+		fi
+		xmlstarlet ed -L -s "//_:manifest" -t elem -n define -v "" \
+			-i "//_:manifest/define" -t attr -n name -v "${SYMBOLICNAME}" \
+			-i "//_:manifest/define" -t attr -n type -v "${BUNDLEPARTTYPE}" \
+			-i "//_:manifest/define" -t attr -n path -v "${FILENAME}.${BUNDLEPARTEXTENSION}" \
+			"${MANIFEST}"
+			
+		# Add JVMSERVER to properties file if it is not already defined
+		PROPERTIES="${DIRECTORY}/variable.properties"
 
-   	# Add part to the CICS bundle manifest
-	if [[ $VERBOSE == 1 ]] ; then
-		echo "Adding bundle part file to the manifest file ${MANIFEST}"
-	fi
-	xmlstarlet ed -L -s "//_:manifest" -t elem -n define -v "" \
-		-i "//_:manifest/define" -t attr -n name -v "${FILENAME}" \
-		-i "//_:manifest/define" -t attr -n type -v "${BUNDLEPARTTYPE}" \
-		-i "//_:manifest/define" -t attr -n path -v "${FILENAME}.${BUNDLEPARTEXTENSION}" \
-		"${MANIFEST}"
+		if [[ -z $(get_property ${BUNDLEPARTJVMSERVERPROPERTY} ${PROPERTIES}) ]] ; then
+			if [[ $VERBOSE == 1 ]] ; then
+				echo "Adding property ${BUNDLEPARTJVMSERVERPROPERTY}=${BUNDLEPARTJVMSERVER} to ${PROPERTIES}"
+			fi
+
+			echo -e \
+				"\n# Added by script" $(basename "$0") \
+				"\n${BUNDLEPARTJVMSERVERPROPERTY}=${BUNDLEPARTJVMSERVER}" \
+				>> "${PROPERTIES}"
+		fi
+	fi 
 
 	# Copy file to be added into CICS bundle
 	if [[ $VERBOSE == 1 ]] ; then
