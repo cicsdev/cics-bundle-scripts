@@ -1,8 +1,8 @@
 # cics-bundle-scripts
 Sample scripts to process the contents in a CICS bundle:
 
-* [addtocicsbundle](addtocicsbundle) adds pre-build Java archives to a CICS bundle.
-    Can be used by build systems to deploy Java applications to CICS within a CICS bundle without having to create them in CICS Explorer and mange them in a source code system.
+* [addtocicsbundle](addtocicsbundle) adds pre-built Java archive files to a CICS bundle.
+    Can be used by build systems to dynamically package Java applications ready for deployment into CICS without the need to use CICS Explorer.
 
 * [tagcicsbundle](tagcicsbundle) tags text files in a CICS bundle with an encoding based on the file extension.
     Once files in the CICS bundle have the correct file tag encoding, editors such as ISPF can be used to easily view them which can be useful for problem diagnosis.
