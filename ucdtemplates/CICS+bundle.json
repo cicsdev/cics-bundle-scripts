@@ -2,7 +2,7 @@
     "securityResourceId": "1ba89413-b7a6-4b6a-874c-fb8edefedc1f",
     "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0",
     "name": "CICS bundle",
-    "description": "Component template for CICS bundles.",
+    "description": "Component template for deploying CICS bundles.",
     "ignoreQualifiers": 0,
     "componentType": "STANDARD",
     "tags": [],
@@ -31,38 +31,38 @@
     "propDefs": [
         {
             "name": "cics.bundle.version",
-            "label": "cics.bundle.version",
+            "label": "CICS bundle version",
             "pattern": "",
             "type": "TEXT",
             "required": true,
-            "description": "CICS bundle version",
+            "description": "CICS BUNDLE resource version",
             "placeholder": ""
         },
         {
             "name": "cics.bundle.definition.name",
-            "label": "cics.bundle.definition.name",
+            "label": "CICS bundle name",
             "pattern": "",
             "type": "TEXT",
             "required": true,
-            "description": "CICS BUNDLE resource definition name",
+            "description": "CICS BUNDLE resource name",
             "placeholder": ""
         },
         {
             "name": "cics.bundle.definition.group.name",
-            "label": "cics.bundle.definition.group.name",
+            "label": "CICS bundle group name",
             "pattern": "",
             "type": "TEXT",
             "required": true,
-            "description": "CICS BUNDLE resource definition group name",
+            "description": "CICS BUNDLE resource group name",
             "placeholder": ""
         },
         {
             "name": "cics.bundle.properties",
-            "label": "cics.bundle.properties",
+            "label": "Properties to resolve CICS bundle",
             "pattern": "",
             "type": "TEXTAREA",
             "required": false,
-            "description": "",
+            "description": "Properties to resolve CICS bundle",
             "placeholder": ""
         }
     ],
@@ -105,19 +105,53 @@
             "rootActivity": {
                 "edges": [
                     {
-                        "to": "Deploy bundle to CICS as disabled",
-                        "from": "Check bundle target state",
-                        "type": "VALUE",
-                        "value": "disabled\nDisabled"
-                    },
-                    {
                         "to": "Download bundle",
                         "type": "ALWAYS",
                         "value": ""
                     },
                     {
+                        "to": "Resolve variables in bundle if variables.properties exist",
+                        "from": "Create file resolve.properities",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
+                        "to": "Create file resolve.properities",
+                        "type": "ALWAYS",
+                        "value": ""
+                    },
+                    {
+                        "to": "Undeploy any existing version of bundle from CICS",
+                        "from": "Resolve variables in bundle if variables.properties exist",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
                         "to": "Copy bundle to CICS platform home",
                         "from": "Delete bundle directory from CICS platform home",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
+                        "to": "04815b03172869acc4677adad15cca",
+                        "from": "Deploy bundle to CICS as enabled",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
+                        "to": "Delete work directories",
+                        "type": "ALWAYS",
+                        "value": ""
+                    },
+                    {
+                        "to": "Resolve variables in bundle if variables.properties exist",
+                        "from": "Delete work directories",
+                        "type": "SUCCESS",
+                        "value": ""
+                    },
+                    {
+                        "to": "04815b03172869acc4677adad15cca",
+                        "from": "Deploy bundle to CICS as disabled",
                         "type": "SUCCESS",
                         "value": ""
                     },
@@ -128,19 +162,8 @@
                         "value": "available\nAvailable"
                     },
                     {
-                        "to": "Resolve variables in bundle",
-                        "from": "Delete work directories",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Create file resolve.properities",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Resolve variables in bundle",
-                        "from": "Create file resolve.properities",
+                        "to": "Resolve variables in bundle if variables.properties exist",
+                        "from": "Download bundle",
                         "type": "SUCCESS",
                         "value": ""
                     },
@@ -151,37 +174,8 @@
                         "value": ""
                     },
                     {
-                        "to": "Delete work directories",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Undeploy any existing version of bundle from CICS",
-                        "from": "Resolve variables in bundle",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Deploy bundle to CICS as enabled",
-                        "from": "Check bundle target state",
-                        "type": "VALUE",
-                        "value": ""
-                    },
-                    {
-                        "to": "04815b03172869acc4677adad15cca",
-                        "from": "Deploy bundle to CICS as disabled",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
                         "to": "04815b03172869acc4677adad15cca",
                         "from": "Deploy bundle to CICS as available",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Resolve variables in bundle",
-                        "from": "Download bundle",
                         "type": "SUCCESS",
                         "value": ""
                     },
@@ -192,101 +186,107 @@
                         "value": ""
                     },
                     {
-                        "to": "04815b03172869acc4677adad15cca",
-                        "from": "Deploy bundle to CICS as enabled",
-                        "type": "SUCCESS",
+                        "to": "Deploy bundle to CICS as enabled",
+                        "from": "Check bundle target state",
+                        "type": "VALUE",
                         "value": ""
+                    },
+                    {
+                        "to": "Deploy bundle to CICS as disabled",
+                        "from": "Check bundle target state",
+                        "type": "VALUE",
+                        "value": "disabled\nDisabled"
                     }
                 ],
                 "offsets": [
                     {
-                        "name": "Deploy bundle to CICS as disabled",
-                        "x": -750,
-                        "y": 1040,
+                        "name": "Delete work directories",
+                        "x": -735,
+                        "y": 150,
+                        "h": 110,
+                        "w": 560
+                    },
+                    {
+                        "name": "04815b03172869acc4677adad15cca",
+                        "x": -45,
+                        "y": 1270,
                         "h": 100,
+                        "w": 160
+                    },
+                    {
+                        "name": "Undeploy any existing version of bundle from CICS",
+                        "x": -329.00146484375,
+                        "y": 470,
+                        "h": 110,
+                        "w": 780
+                    },
+                    {
+                        "name": "Delete bundle directory from CICS platform home",
+                        "x": -327.60009765625,
+                        "y": 630,
+                        "h": 110,
+                        "w": 760
+                    },
+                    {
+                        "name": "Check bundle target state",
+                        "x": -228.75,
+                        "y": 950,
+                        "h": 110,
+                        "w": 530
+                    },
+                    {
+                        "name": "Deploy bundle to CICS as available",
+                        "x": 345,
+                        "y": 1110,
+                        "h": 110,
+                        "w": 580
+                    },
+                    {
+                        "name": "Create file resolve.properities",
+                        "x": 325,
+                        "y": 150,
+                        "h": 110,
                         "w": 490
                     },
                     {
                         "name": "Deploy bundle to CICS as enabled",
-                        "x": 300,
-                        "y": 1040,
-                        "h": 100,
-                        "w": 490
-                    },
-                    {
-                        "name": "04815b03172869acc4677adad15cca",
-                        "x": -55,
-                        "y": 1190,
-                        "h": 90,
-                        "w": 150
-                    },
-                    {
-                        "name": "Delete work directories",
-                        "x": -665,
-                        "y": 140,
-                        "h": 100,
-                        "w": 490
-                    },
-                    {
-                        "name": "Undeploy any existing version of bundle from CICS",
-                        "x": -286.9586181640625,
-                        "y": 440,
-                        "h": 100,
-                        "w": 680
-                    },
-                    {
-                        "name": "Check bundle target state",
-                        "x": -207.491455078125,
-                        "y": 890,
-                        "h": 100,
-                        "w": 460
-                    },
-                    {
-                        "name": "Download bundle",
-                        "x": 315,
-                        "y": 140,
-                        "h": 100,
-                        "w": 390
-                    },
-                    {
-                        "name": "Deploy bundle to CICS as available",
-                        "x": -230,
-                        "y": 1040,
-                        "h": 100,
-                        "w": 500
-                    },
-                    {
-                        "name": "Create file resolve.properities",
-                        "x": -145,
-                        "y": 140,
-                        "h": 100,
-                        "w": 430
+                        "x": -245,
+                        "y": 1110,
+                        "h": 110,
+                        "w": 560
                     },
                     {
                         "name": "Copy bundle to CICS platform home",
-                        "x": -223.3819580078125,
-                        "y": 740,
-                        "h": 100,
-                        "w": 510
+                        "x": -246.19873046875,
+                        "y": 790,
+                        "h": 110,
+                        "w": 580
                     },
                     {
-                        "name": "Delete bundle directory from CICS platform home",
-                        "x": -287.6702880859375,
-                        "y": 590,
-                        "h": 100,
-                        "w": 660
+                        "name": "Download bundle",
+                        "x": -145,
+                        "y": 150,
+                        "h": 110,
+                        "w": 440
                     },
                     {
-                        "name": "Resolve variables in bundle",
-                        "x": -139.644775390625,
-                        "y": 290,
-                        "h": 100,
-                        "w": 410
+                        "name": "Deploy bundle to CICS as disabled",
+                        "x": -845,
+                        "y": 1110,
+                        "h": 110,
+                        "w": 570
+                    },
+                    {
+                        "name": "Resolve variables in bundle if variables.properties exist",
+                        "x": -349.35546875,
+                        "y": 310,
+                        "h": 110,
+                        "w": 840
                     }
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "2f593617-ddbe-4611-a92a-cbeb9227d680",
+                "name": "412ac4ff-9d8f-490b-98c5-7227b61ed5fb",
                 "children": [
                     {
                         "type": "finish",
@@ -357,7 +357,7 @@
                             "outputFile": ""
                         },
                         "type": "plugin",
-                        "name": "Resolve variables in bundle",
+                        "name": "Resolve variables in bundle if variables.properties exist",
                         "children": []
                     },
                     {
@@ -373,7 +373,7 @@
                             "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
                             "resourceDefinition": "CSD",
                             "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "UCD component ${p:component.name}",
+                            "description": "${p:component.name}",
                             "targetstatus": "ENABLED",
                             "timeout": "300",
                             "JCLjobstatement": "${p?:deploy.env.jobstatement}",
@@ -503,7 +503,7 @@
                             "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
                             "resourceDefinition": "CSD",
                             "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "UCD component ${p:component.name}",
+                            "description": "${p:component.name}",
                             "targetstatus": "DISABLED",
                             "timeout": "300",
                             "JCLjobstatement": "${p?:deploy.env.jobstatement}",
@@ -538,7 +538,7 @@
                             "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
                             "resourceDefinition": "CSD",
                             "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "UCD component ${p:component.name}",
+                            "description": "${p:component.name}",
                             "targetstatus": "AVAILABLE",
                             "timeout": "300",
                             "JCLjobstatement": "${p?:deploy.env.jobstatement}",
@@ -640,14 +640,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|uiQ7sVWjUFX9NCfSHd\/eug==|6HQuyswWOXpjAa3qX6bMyA\/GO\/5OBJ5M3pevc390ZkQ=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hJg7KRXm0bE7uNk2TvCglw==|k63aSuWyXpIbR0\/+E0tpSVhV5S29f4HqIn0SCn48haY=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|TtvkOgiP3IWPI\/SfTf4A6g==|0uf8tHyBk9TiFkI7qA3yyGX1mjkBZynCIkFPurBGA6o=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Ci50PbdExpDqhpT77lMeRQ==|hx5hivJUnorlH0CQrexrtWaA\/hkZGVt5BUjLCqzr4fI=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|v+Vzy6J78nLlF7g7mDhI3g==|SorRHTPjkeUzfOnZmbLRx1+BSe6wpG96R77\/qFWcmIE=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|sT1Vw\/mf9r6vq0PYbCNAkg==|25TnoG34RzUmmoyUnoCTKH4e6mmoXRRL9oBwVf\/Pxfc=}"
                         },
                         "type": "plugin",
                         "name": "Disable the bundle",
@@ -671,14 +671,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|\/1bcsFBYJc8e4LfwU3Gt+w==|pzYTwqvnro1ahND8KmujdQ0EpGbVrQ16SX6WVBssFhY=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|GvkYSEkCDvmNYOCjXmiNKw==|Ib5f5ahDNOwjDmqZ9GwFuqy6GA+Ph+Ok124mnS2ib2w=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|\/sqfirXdUBJZs2tJYVu3yQ==|YaqfAKXPMe+\/vkG8Wo9CY2dW71hZGPM7B4nUR4sVw00=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hXn5WK8YXTiUZsk5\/q3Z6Q==|gXWcNmpNFTDcN8XhWQ0UBJM31CfG\/D9wcU24IzZdPBo=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|1kgFUqrPdaANlamHkMTfiQ==|u6uySLFIUz2AbDXfyPDJKBrJKdYm9kas4WgTJM3Py+s=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|YQritRT99SE7aPtfE9b\/sw==|h0HKlDaN0+6TdKsj+ZiuBUJadfY94giT\/Y6JhmqIpE4=}"
                         },
                         "type": "plugin",
                         "name": "Check the bundle is disabled",
@@ -764,14 +764,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|MnKZokEXYHcd7BhJD0mWXw==|CytMLpilRx7yXKxhasBWNbLqyLY6jsBHa2phuRE04DY=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hHByfUg5uWram7mam+39HA==|UZUyhVzZqPUfqQmGceCTZoP6CMKAE7bkjcty3l27S18=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hQBU1+1CYKxTv9vO4EcTBw==|km3l7Hhh5TJrczYPXVd\/vAEwWQL76CGT+70OJ86sclY=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|g\/8MUTTTxp9LndhM3BZvqw==|trIe2KI9z\/WmyUGgJQUmEmjGgyC2VEq7lmHyWY0wKrQ=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|iGeTLWQm6l5t2xphPlaz2A==|c+3seUBadBn4dVaiQ9J1yesLBkqEiGFVWagTcXBg0sc=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|z5sN1AqdzFQw03EUuVxmbQ==|SOTafyT9MYH5fNWYoAWH\/dXqi03WDPEZG6Gs4256Hwo=}"
                         },
                         "type": "plugin",
                         "name": "Enable the bundle",
@@ -795,14 +795,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|xdfSF7A3Nv7DbdzhJZuduA==|H3YKT4MYTdO66tJGiBrGVvIRVN9qbyAvk9oCjA0xELI=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|ztRco+4dguMX0PfmvbnB1A==|fJ8JOFqtTBFSZODFCf6J++iDfKKA+JsTlZgGv0aOO5E=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|eXiXoEAAVtALel27A0QPpA==|ZIgu+NflI+FHCjx8ZG7pjCBiQC0mIi+MzlxUqJsImW0=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|0JUVmWyB9xzkqC8VfdFL5w==|lLt8sLOTTRO1JxIg9j97nNVV7veFx10SemkMjhbQXQ0=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|5pbRZ9nBUJpuMJxoR\/\/mWA==|xhsIWcGNKAa\/C8SRJck3q8GNX0hT78aznOT7k6vDIRE=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|2RVyDCAVFsXfrfP5lMRuow==|olzJHzHeNwBzVUJ7+tjSj+bc6U37irA+4KzE35qFkD8=}"
                         },
                         "type": "plugin",
                         "name": "Check enable bundle is enabled",
@@ -888,14 +888,14 @@
                             "cicsplex": "${p:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|TG81Yb1kezBqLDNiOdp6oQ==|KOJNVqGWTBPEtctnCg0GZ3T9JdNL6l0hhBremm3cBMI=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|sNqFWNB61t6OB7j9r0RaAA==|1noFf+vm6DEXc5rH2K77kKjkVsdrGozoFUlnoEKZS64=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|L1nP\/3dwducYUYJdZyxoCQ==|ZQuR4lynFboeBoZTCNKINodZ9agEoWaiUN4xbeqGJSk=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|lr2XDPHt8vcTxvVqelwxZA==|MuP+JRwsBEzxFPtFOHhFpOuwQIH+dk51DjHktMCa9PY=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|zQaLCdfMmrhYWe8K5n9t4w==|DqsQCZ6UrWKjrigEo3pvm9fKrB3s7WhvzZfpj0SjvC4=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|qv6xkQC4r237RCbMtBQapQ==|sIKuuCLyYi36T8c8VK69RLllqgXGG2AVDQoU97ki+u4=}"
                         },
                         "type": "plugin",
                         "name": "Make bundle available",
@@ -919,14 +919,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|\/ztdmhv09qLUy5dbpud1rA==|UGqBdCzFp6B9KYNaMwnJFr3YAhAcYBs5h7P9s1FBIIM=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Sk1fOYyshRABAajSYZW25A==|ykZgp\/MOfRErqOwdRJvetRf5DvnOrUYBMyuYBVkB0ms=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|w408uI6INIYAvXm9RROFsA==|iGtXnSuyFKF8Z+oRhgEFeKMFazQdbvLWyU3JeaoLrzU=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|\/7nxrcJYRdYiaHPkeHhloQ==|tPm0nEDuI5\/xxmMVNbO1QobDy1H8wC0LE+PrssM45MU=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|OxoPk9lBc\/snY2TyMATMVA==|mqp+bg9ziCyGH9Eod86w7NqqlXGXktKe9tQQLRwl8z8=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|AvOF4FVQ3yEzRA0t\/17kaw==|i4DIR\/5UtqNsjzQOLu\/kZtXUPIF7mm63nbXBvXZpb8w=}"
                         },
                         "type": "plugin",
                         "name": "Check bundle is available",
@@ -1014,14 +1014,14 @@
                             "cicsplex": "${p?:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|NQdE24I7WjdNRnpfdR2oxg==|vnAAqZBzSsiOYcgRltw+YUHP0OHJiYFrXcz5+zyFByE=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|iUjvpFkoBET7nPVSzm5bQA==|bvCTRW2CXkN+EWanWhilINDN2I+d0zEzed3kZUP0Y0s=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hJ4Bu+pDNRkds\/8HFB2FBA==|2r2kmfnKl3HsqdUD+3Ej3jeCIloRPCnhZLEqh6iA2Ps=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Qc\/pzX33b9129uyXH+O0Vg==|WN4ruZbFHhP85fBltIHaaGtIYitrsyohSPTgmyjvnII=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|svSYNG\/TyUe\/QU2Xyf1fAQ==|++sytA2yXZjFd+iozJMjCdckDQV2Ep\/D0OP+Us5t+hY=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|4HRkjszUTCQaK0LtoWXj\/A==|\/bLqq74KumOfJhlYxnhwsGWWUTu2Hs1sgoXyXI4XOPM=}"
                         },
                         "type": "plugin",
                         "name": "Check bundle is unavailable",
@@ -1043,14 +1043,14 @@
                             "cicsplex": "${p:cics.cicsplex}",
                             "cicsscope": "${p?:cics.scope}",
                             "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|wGdTRKYX40gEuCVRPhq6BQ==|1wwYPoqGGykhtfysRs5QDJhTWPhKUKW0JES\/bC0Npq8=}",
+                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|e7gKdFxlPUq7am3HGTZxvA==|ZBGyxeBIA4OkKDhg5VU5JHRDqi0A9dAdkidtDiCAqmk=}",
                             "ssl": "${p?:cics.ssl}",
                             "ks_location": "${p?:cics.kslocation}",
                             "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|vkGmiLVLkHhDyQK+g\/cRXg==|tE0FFUqJRO0i9Ii6hzJNp6Ytm5eh7U3+RJALvpaNBkA=}",
+                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|lKq+n94OVMZ\/+Iztrh1RFw==|gdXiNU9pk8fVd+wL+9msLWfuZ9QBK80Ti5PVMw4g2W8=}",
                             "ts_location": "${p?:cics.tslocation}",
                             "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|gApk13DQ9KGa\/RUTxLjp6A==|0K1T2Ohbd3EoW37evVbBfdHnBb8CdebB\/8tdTUcudjI=}"
+                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|2+1CLj3xu7zXUTpE314fFg==|pJQ1CXOVwav48FM6kEMV+1Iulp6wX3Y628i4eh\/YY0E=}"
                         },
                         "type": "plugin",
                         "name": "Make bundle unavailable",
@@ -1081,6 +1081,17 @@
             "rootActivity": {
                 "edges": [
                     {
+                        "to": "Undeploy bundle from CICS",
+                        "type": "ALWAYS",
+                        "value": ""
+                    },
+                    {
+                        "to": "3d0c57cf4840439429313a389e00f5",
+                        "from": "Check cics.bundle.delete",
+                        "type": "VALUE",
+                        "value": ""
+                    },
+                    {
                         "to": "Check cics.bundle.delete",
                         "from": "Undeploy bundle from CICS",
                         "type": "SUCCESS",
@@ -1093,30 +1104,19 @@
                         "value": ""
                     },
                     {
-                        "to": "Undeploy bundle from CICS",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
                         "to": "Delete bundle directory from CICS platform home",
                         "from": "Check cics.bundle.delete",
                         "type": "VALUE",
                         "value": "true"
-                    },
-                    {
-                        "to": "3d0c57cf4840439429313a389e00f5",
-                        "from": "Check cics.bundle.delete",
-                        "type": "VALUE",
-                        "value": ""
                     }
                 ],
                 "offsets": [
                     {
-                        "name": "Undeploy bundle from CICS",
-                        "x": -85,
-                        "y": 130,
+                        "name": "Check cics.bundle.delete",
+                        "x": -81.49977137631458,
+                        "y": 250,
                         "h": 70,
-                        "w": 280
+                        "w": 270
                     },
                     {
                         "name": "Delete bundle directory from CICS platform home",
@@ -1133,16 +1133,16 @@
                         "w": 120
                     },
                     {
-                        "name": "Check cics.bundle.delete",
-                        "x": -81.49977137631458,
-                        "y": 250,
+                        "name": "Undeploy bundle from CICS",
+                        "x": -85,
+                        "y": 130,
                         "h": 70,
-                        "w": 270
+                        "w": 280
                     }
                 ],
                 "layoutMode": "auto",
                 "type": "graph",
-                "name": "fd6a2805-4ec8-4f5a-93e7-408315b6f9cf",
+                "name": "edb580c2-16f9-47a3-9fa3-e25d224fdd50",
                 "children": [
                     {
                         "type": "finish",
@@ -1187,12 +1187,13 @@
                         "useImpersonation": false,
                         "showHidden": true,
                         "impersonationUseSudo": false,
+                        "workingDir": "${p:cics.platform.home}\/bundles",
                         "commandName": "Delete Files and Directories",
                         "pluginName": "File Utils",
                         "pluginVersion": 53,
                         "properties": {
-                            "baseDir": "${p:cics.platform.home}\/bundles",
-                            "includes": "${p:component.name}_${p:cics.bundle.version}",
+                            "baseDir": ".",
+                            "includes": "${p:component.name}_${p:cics.bundle.version}\/**",
                             "excludes": "",
                             "followSymlinks": "false",
                             "caseSensitive": "true"
