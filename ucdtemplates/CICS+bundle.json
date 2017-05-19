@@ -1,1222 +1,1228 @@
 {
-    "securityResourceId": "1ba89413-b7a6-4b6a-874c-fb8edefedc1f",
-    "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0",
-    "name": "CICS bundle",
-    "description": "Component template for deploying CICS bundles.",
-    "ignoreQualifiers": 0,
-    "componentType": "STANDARD",
-    "tags": [],
-    "active": true,
-    "envPropDefs": [
+  "securityResourceId": "1ba89413-b7a6-4b6a-874c-fb8edefedc1f",
+  "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0",
+  "name": "CICS bundle",
+  "description": "Component template for deploying CICS bundles.",
+  "ignoreQualifiers": 0,
+  "componentType": "STANDARD",
+  "tags": [],
+  "active": true,
+  "envPropDefs": [
+    {
+      "name": "cics.platform.home",
+      "label": "cics.platform.home",
+      "pattern": "",
+      "type": "TEXT",
+      "required": true,
+      "description": "CICS platform home directory",
+      "placeholder": ""
+    },
+    {
+      "name": "cics.platform.properties",
+      "label": "cics.platform.properties",
+      "pattern": "",
+      "type": "TEXTAREA",
+      "required": false,
+      "description": "CICS platform properties",
+      "placeholder": ""
+    }
+  ],
+  "resPropDefs": [],
+  "propDefs": [
+    {
+      "name": "cics.bundle.version",
+      "label": "CICS bundle version",
+      "pattern": "",
+      "type": "TEXT",
+      "required": true,
+      "description": "CICS BUNDLE resource version",
+      "placeholder": ""
+    },
+    {
+      "name": "cics.bundle.definition.name",
+      "label": "CICS bundle name",
+      "pattern": "",
+      "type": "TEXT",
+      "required": true,
+      "description": "CICS BUNDLE resource name",
+      "placeholder": ""
+    },
+    {
+      "name": "cics.bundle.definition.group.name",
+      "label": "CICS bundle group name",
+      "pattern": "",
+      "type": "TEXT",
+      "required": true,
+      "description": "CICS BUNDLE resource group name",
+      "placeholder": ""
+    },
+    {
+      "name": "cics.bundle.properties",
+      "label": "Properties to resolve CICS bundle",
+      "pattern": "",
+      "type": "TEXTAREA",
+      "required": false,
+      "description": "Properties to resolve CICS bundle",
+      "placeholder": ""
+    }
+  ],
+  "properties": [],
+  "processes": [
+    {
+      "name": "Deploy",
+      "description": "Deploy the CICS bundle",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": true,
+      "inventoryActionType": "ADD",
+      "status": "Active",
+      "configActionType": "ADD",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/11eecbb5-1353-4eca-a668-1d9eaffe8f6a",
+      "propDefs": [
         {
-            "name": "cics.platform.home",
-            "label": "cics.platform.home",
-            "pattern": "",
-            "type": "TEXT",
-            "required": true,
-            "description": "CICS platform home directory",
-            "placeholder": ""
-        },
-        {
-            "name": "cics.platform.properties",
-            "label": "cics.platform.properties",
-            "pattern": "",
-            "type": "TEXTAREA",
-            "required": false,
-            "description": "CICS platform properties",
-            "placeholder": ""
+          "name": "cics.bundle.target.state",
+          "label": "CICS bundle target state",
+          "pattern": "",
+          "type": "SELECT",
+          "value": "Enabled",
+          "required": false,
+          "description": "CICS bundle target state",
+          "placeholder": "",
+          "allowedValues": [
+            {
+              "label": "Available",
+              "value": "Available"
+            },
+            {
+              "label": "Enabled",
+              "value": "Enabled"
+            },
+            {
+              "label": "Disabled",
+              "value": "Disabled"
+            }
+          ]
         }
-    ],
-    "resPropDefs": [],
-    "propDefs": [
+      ],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "Download bundle",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "Resolve variables in bundle if variables.properties exist",
+            "from": "Create file resolve.properities",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Create file resolve.properities",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "Undeploy any existing version of bundle from CICS",
+            "from": "Resolve variables in bundle if variables.properties exist",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Copy bundle to CICS platform home",
+            "from": "Delete bundle directory from CICS platform home",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "04815b03172869acc4677adad15cca",
+            "from": "Deploy bundle to CICS as enabled",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Delete work directories",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "Resolve variables in bundle if variables.properties exist",
+            "from": "Delete work directories",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "04815b03172869acc4677adad15cca",
+            "from": "Deploy bundle to CICS as disabled",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Deploy bundle to CICS as available",
+            "from": "Check bundle target state",
+            "type": "VALUE",
+            "value": "available\nAvailable"
+          },
+          {
+            "to": "Resolve variables in bundle if variables.properties exist",
+            "from": "Download bundle",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Delete bundle directory from CICS platform home",
+            "from": "Undeploy any existing version of bundle from CICS",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "04815b03172869acc4677adad15cca",
+            "from": "Deploy bundle to CICS as available",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Check bundle target state",
+            "from": "Copy bundle to CICS platform home",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Deploy bundle to CICS as enabled",
+            "from": "Check bundle target state",
+            "type": "VALUE",
+            "value": ""
+          },
+          {
+            "to": "Deploy bundle to CICS as disabled",
+            "from": "Check bundle target state",
+            "type": "VALUE",
+            "value": "disabled\nDisabled"
+          }
+        ],
+        "offsets": [
+          {
+            "name": "Delete work directories",
+            "x": -735,
+            "y": 150,
+            "h": 110,
+            "w": 560
+          },
+          {
+            "name": "04815b03172869acc4677adad15cca",
+            "x": -45,
+            "y": 1270,
+            "h": 100,
+            "w": 160
+          },
+          {
+            "name": "Undeploy any existing version of bundle from CICS",
+            "x": -329.00146484375,
+            "y": 470,
+            "h": 110,
+            "w": 780
+          },
+          {
+            "name": "Delete bundle directory from CICS platform home",
+            "x": -327.60009765625,
+            "y": 630,
+            "h": 110,
+            "w": 760
+          },
+          {
+            "name": "Check bundle target state",
+            "x": -228.75,
+            "y": 950,
+            "h": 110,
+            "w": 530
+          },
+          {
+            "name": "Deploy bundle to CICS as available",
+            "x": 345,
+            "y": 1110,
+            "h": 110,
+            "w": 580
+          },
+          {
+            "name": "Create file resolve.properities",
+            "x": 325,
+            "y": 150,
+            "h": 110,
+            "w": 490
+          },
+          {
+            "name": "Deploy bundle to CICS as enabled",
+            "x": -245,
+            "y": 1110,
+            "h": 110,
+            "w": 560
+          },
+          {
+            "name": "Copy bundle to CICS platform home",
+            "x": -246.19873046875,
+            "y": 790,
+            "h": 110,
+            "w": 580
+          },
+          {
+            "name": "Download bundle",
+            "x": -145,
+            "y": 150,
+            "h": 110,
+            "w": 440
+          },
+          {
+            "name": "Deploy bundle to CICS as disabled",
+            "x": -845,
+            "y": 1110,
+            "h": 110,
+            "w": 570
+          },
+          {
+            "name": "Resolve variables in bundle if variables.properties exist",
+            "x": -349.35546875,
+            "y": 310,
+            "h": 110,
+            "w": 840
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "412ac4ff-9d8f-490b-98c5-7227b61ed5fb",
+        "children": [
+          {
+            "type": "finish",
+            "name": "04815b03172869acc4677adad15cca",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Download Artifacts",
+            "pluginName": "IBM UrbanCode Deploy Versioned File Storage",
+            "pluginVersion": 28,
+            "properties": {
+              "directoryOffset": "./built/",
+              "artifactSetBaseDir": "",
+              "fileIncludePatterns": "**/*",
+              "fileExcludePatterns": "",
+              "syncMode": "FULL",
+              "fullVerification": "true",
+              "setFileExecuteBits": "false",
+              "verifyFileIntegrity": "false",
+              "versionId": "${p:version.id}",
+              "serverUrl": "${p:server.url}",
+              "compId": "${p:component.id}",
+              "resId": "${p:resource.id}",
+              "charset": "",
+              "label": ""
+            },
+            "type": "plugin",
+            "name": "Download bundle",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Copy Directory",
+            "pluginName": "File Utils",
+            "pluginVersion": 53,
+            "properties": {
+              "sourceDir": "./resolved/bundles",
+              "destDirList": "${p:cics.platform.home}/bundles",
+              "includes": "**/*",
+              "excludes": "",
+              "mapperRules": "",
+              "force": "false"
+            },
+            "type": "plugin",
+            "name": "Copy bundle to CICS platform home",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Shell",
+            "pluginName": "Shell",
+            "pluginVersion": 9,
+            "properties": {
+              "directoryOffset": ".",
+              "shellInterpreter": "",
+              "scriptBody": "${p:cicsbt.directory}/cicsbt_zos \\\n--resolve ./built \\\n--properties ./resolve.properties \\\n--workspace ./workspace \\\n--output ./resolved \\\n--verbose",
+              "runAsDaemon": "false",
+              "outputFile": ""
+            },
+            "type": "plugin",
+            "name": "Resolve variables in bundle if variables.properties exist",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Deploy bundle",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "bundleName": "${p:cics.bundle.definition.name}",
+              "bundleDirectory": "${p:cics.platform.home}/bundles/${p:component.name}_${p:cics.bundle.version}",
+              "resourceDefinition": "CSD",
+              "groupName": "${p:cics.bundle.definition.group.name}",
+              "description": "${p:component.name}",
+              "targetstatus": "ENABLED",
+              "timeout": "300",
+              "JCLjobstatement": "${p?:deploy.env.jobstatement}",
+              "trace": "false",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cmas": "${p?:cics.cicsplex.cmas}",
+              "cicsscope": "${p:cics.scope}",
+              "cicshlq": "${p:cics.cicshlq}",
+              "cpsmhlq": "${p:cics.cpsmhlq}",
+              "jesHost": "${p:jes.host}",
+              "jmonPort": "${p:jes.monitor.port}",
+              "jesUsername": "${p:jes.user}",
+              "jesPassword": "${p?:jes.password}",
+              "usePassticket": "true",
+              "irrracfJarFile": "/usr/include/java_classes/IRRRacf.jar",
+              "irrracfLib": "/usr/lib"
+            },
+            "type": "plugin",
+            "name": "Deploy bundle to CICS as enabled",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": true,
+            "impersonationUseSudo": false,
+            "commandName": "Delete Files and Directories",
+            "pluginName": "File Utils",
+            "pluginVersion": 53,
+            "properties": {
+              "baseDir": "${p:cics.platform.home}/bundles",
+              "includes": "${p:component.name}_${p:cics.bundle.version}/",
+              "excludes": "",
+              "followSymlinks": "false",
+              "caseSensitive": "true"
+            },
+            "type": "plugin",
+            "name": "Delete bundle directory from CICS platform home",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Undeploy bundles",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "bundleNameList": "${p:cics.bundle.definition.name}",
+              "resourceDefinition": "CSD",
+              "groupName": "${p:cics.bundle.definition.group.name}",
+              "targetstatus": "DISCARDED",
+              "timeout": "300",
+              "JCLjobstatement": "${p?:deploy.env.jobstatement}",
+              "trace": "false",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cmas": "${p?:cics.cicsplex.cmas}",
+              "cicsscope": "${p:cics.scope}",
+              "cicshlq": "${p:cics.cicshlq}",
+              "cpsmhlq": "${p:cics.cpsmhlq}",
+              "jesHost": "${p:jes.host}",
+              "jmonPort": "${p:jes.monitor.port}",
+              "jesUsername": "${p:jes.user}",
+              "jesPassword": "${p?:jes.password}",
+              "usePassticket": "true",
+              "irrracfJarFile": "/usr/include/java_classes/IRRRacf.jar",
+              "irrracfLib": "/usr/lib"
+            },
+            "type": "plugin",
+            "name": "Undeploy any existing version of bundle from CICS",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Create File",
+            "pluginName": "File Utils",
+            "pluginVersion": 53,
+            "properties": {
+              "file": "resolve.properties",
+              "contents": "# Properties from cics.bundle.properties\n${p:cics.bundle.properties}\n\n# Properties from cics.platform.properties\n${p:environment/cics.platform.properties}\n",
+              "overwrite": "true",
+              "customEncoding": ""
+            },
+            "type": "plugin",
+            "name": "Create file resolve.properities",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Delete Files and Directories",
+            "pluginName": "File Utils",
+            "pluginVersion": 53,
+            "properties": {
+              "baseDir": ".",
+              "includes": "resolved/\nworkspace/",
+              "excludes": "",
+              "followSymlinks": "false",
+              "caseSensitive": "true"
+            },
+            "type": "plugin",
+            "name": "Delete work directories",
+            "children": []
+          },
+          {
+            "propertyName": "cics.bundle.target.state",
+            "type": "switch",
+            "name": "Check bundle target state",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Deploy bundle",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "bundleName": "${p:cics.bundle.definition.name}",
+              "bundleDirectory": "${p:cics.platform.home}/bundles/${p:component.name}_${p:cics.bundle.version}",
+              "resourceDefinition": "CSD",
+              "groupName": "${p:cics.bundle.definition.group.name}",
+              "description": "${p:component.name}",
+              "targetstatus": "DISABLED",
+              "timeout": "300",
+              "JCLjobstatement": "${p?:deploy.env.jobstatement}",
+              "trace": "false",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cmas": "${p?:cics.cicsplex.cmas}",
+              "cicsscope": "${p:cics.scope}",
+              "cicshlq": "${p:cics.cicshlq}",
+              "cpsmhlq": "${p:cics.cpsmhlq}",
+              "jesHost": "${p:jes.host}",
+              "jmonPort": "${p:jes.monitor.port}",
+              "jesUsername": "${p:jes.user}",
+              "jesPassword": "${p?:jes.password}",
+              "usePassticket": "true",
+              "irrracfJarFile": "/usr/include/java_classes/IRRRacf.jar",
+              "irrracfLib": "/usr/lib"
+            },
+            "type": "plugin",
+            "name": "Deploy bundle to CICS as disabled",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Deploy bundle",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "bundleName": "${p:cics.bundle.definition.name}",
+              "bundleDirectory": "${p:cics.platform.home}/bundles/${p:component.name}_${p:cics.bundle.version}",
+              "resourceDefinition": "CSD",
+              "groupName": "${p:cics.bundle.definition.group.name}",
+              "description": "${p:component.name}",
+              "targetstatus": "AVAILABLE",
+              "timeout": "300",
+              "JCLjobstatement": "${p?:deploy.env.jobstatement}",
+              "trace": "false",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cmas": "${p?:cics.cicsplex.cmas}",
+              "cicsscope": "${p:cics.scope}",
+              "cicshlq": "${p:cics.cicshlq}",
+              "cpsmhlq": "${p:cics.cpsmhlq}",
+              "jesHost": "${p:jes.host}",
+              "jmonPort": "${p:jes.monitor.port}",
+              "jesUsername": "${p:jes.user}",
+              "jesPassword": "${p?:jes.password}",
+              "usePassticket": "true",
+              "irrracfJarFile": "/usr/include/java_classes/IRRRacf.jar",
+              "irrracfLib": "/usr/lib"
+            },
+            "type": "plugin",
+            "name": "Deploy bundle to CICS as available",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Disable",
+      "description": "Disable the CICS bundle",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": false,
+      "status": "",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/58327339-1344-477b-bffe-b249b944e9dc",
+      "propDefs": [],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "00380f319ab62695680666b6eb1a7a",
+            "from": "Check the bundle is disabled",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Disable the bundle",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "Check the bundle is disabled",
+            "from": "Disable the bundle",
+            "type": "SUCCESS",
+            "value": ""
+          }
+        ],
+        "offsets": [
+          {
+            "name": "00380f319ab62695680666b6eb1a7a",
+            "x": -5,
+            "y": 415,
+            "h": 80,
+            "w": 120
+          },
+          {
+            "name": "Disable the bundle",
+            "x": -75,
+            "y": 145,
+            "h": 70,
+            "w": 260
+          },
+          {
+            "name": "Check the bundle is disabled",
+            "x": -125,
+            "y": 280,
+            "h": 70,
+            "w": 360
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "f8afcf07-ed55-40ed-ac6c-c5971181d648",
+        "children": [
+          {
+            "type": "finish",
+            "name": "00380f319ab62695680666b6eb1a7a",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Disable resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Disable the bundle",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Check enable status of resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "expectedStatus": "DISABLED",
+              "timeout": "300",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Check the bundle is disabled",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Enable",
+      "description": "Enable the CICS bundle",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": false,
+      "status": "",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/68e94f91-9c7c-483c-b303-7870497480ae",
+      "propDefs": [],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "Enable the bundle",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "Check enable bundle is enabled",
+            "from": "Enable the bundle",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "fbcd1225f5667bd471075aca93b560",
+            "from": "Check enable bundle is enabled",
+            "type": "SUCCESS",
+            "value": ""
+          }
+        ],
+        "offsets": [
+          {
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "x": -5,
+            "y": 415,
+            "h": 80,
+            "w": 120
+          },
+          {
+            "name": "Enable the bundle",
+            "x": -70,
+            "y": 145,
+            "h": 70,
+            "w": 250
+          },
+          {
+            "name": "Check enable bundle is enabled",
+            "x": -125,
+            "y": 280,
+            "h": 70,
+            "w": 360
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "68e678e9-6ade-41bd-b877-c4e2c1d01983",
+        "children": [
+          {
+            "type": "finish",
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Enable resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Enable the bundle",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Check enable status of resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "expectedStatus": "ENABLED",
+              "timeout": "300",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Check enable bundle is enabled",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Make available",
+      "description": "Make the CICS bundle available",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": false,
+      "status": "",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/f615cea3-693a-4153-acd8-6663fc61e5c9",
+      "propDefs": [],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "Make bundle available",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "fbcd1225f5667bd471075aca93b560",
+            "from": "Check bundle is available",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Check bundle is available",
+            "from": "Make bundle available",
+            "type": "SUCCESS",
+            "value": ""
+          }
+        ],
+        "offsets": [
+          {
+            "name": "Check bundle is available",
+            "x": -130,
+            "y": 280,
+            "h": 70,
+            "w": 370
+          },
+          {
+            "name": "Make bundle available",
+            "x": -100,
+            "y": 145,
+            "h": 70,
+            "w": 310
+          },
+          {
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "x": -5,
+            "y": 415,
+            "h": 80,
+            "w": 120
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "4bf1bdfe-ae83-4145-9473-980c6f143e80",
+        "children": [
+          {
+            "type": "finish",
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Make resources available",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Make bundle available",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Check available status of resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "expectedStatus": "AVAILABLE",
+              "timeout": "300",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Check bundle is available",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Make unavailable",
+      "description": "Make the CICS bundle unavailable",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": false,
+      "status": "",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/25692e16-13e2-4cfe-880c-6e9b40ef54f9",
+      "propDefs": [],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "Check bundle is unavailable",
+            "from": "Make bundle unavailable",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "fbcd1225f5667bd471075aca93b560",
+            "from": "Check bundle is unavailable",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Make bundle unavailable",
+            "type": "ALWAYS",
+            "value": ""
+          }
+        ],
+        "offsets": [
+          {
+            "name": "Make bundle unavailable",
+            "x": -105,
+            "y": 145,
+            "h": 70,
+            "w": 320
+          },
+          {
+            "name": "Check bundle is unavailable",
+            "x": -130,
+            "y": 280,
+            "h": 70,
+            "w": 370
+          },
+          {
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "x": -5,
+            "y": 415,
+            "h": 80,
+            "w": 120
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "4b6a7b1f-c591-4a19-ad77-ac7b8c69dc3c",
+        "children": [
+          {
+            "type": "finish",
+            "name": "fbcd1225f5667bd471075aca93b560",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Check available status of resources",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "expectedStatus": "UNAVAILABLE",
+              "timeout": "300",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p?:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Check bundle is unavailable",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Make resources unavailable",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "resourceNameList": "${p:cics.bundle.definition.name}",
+              "resourceType": "BUNDLE",
+              "hostname": "${p:cics.host}",
+              "port": "${p:cics.cmciport}",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cicsscope": "${p?:cics.scope}",
+              "username": "${p?:cics.username}",
+              "password": "${p?:cics.password}",
+              "ssl": "${p?:cics.ssl}",
+              "ks_location": "${p?:cics.kslocation}",
+              "ks_type": "${p?:cics.kstype}",
+              "ks_password": "${p?:cics.kspassword}",
+              "ts_location": "${p?:cics.tslocation}",
+              "ts_type": "${p?:cics.tstype}",
+              "ts_password": "${p?:cics.tspassword}"
+            },
+            "type": "plugin",
+            "name": "Make bundle unavailable",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "Undeploy",
+      "description": "Undeploy the CICS bundle",
+      "defaultWorkingDir": "${p:resource/work.dir}/${p:component.name}",
+      "takesVersion": true,
+      "inventoryActionType": "REMOVE",
+      "status": "Active",
+      "active": true,
+      "path": "componentTemplates/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0/processes/050acc2e-48aa-4f20-a7f7-b0cb4c091c89",
+      "propDefs": [
         {
-            "name": "cics.bundle.version",
-            "label": "CICS bundle version",
-            "pattern": "",
-            "type": "TEXT",
-            "required": true,
-            "description": "CICS BUNDLE resource version",
-            "placeholder": ""
-        },
-        {
-            "name": "cics.bundle.definition.name",
-            "label": "CICS bundle name",
-            "pattern": "",
-            "type": "TEXT",
-            "required": true,
-            "description": "CICS BUNDLE resource name",
-            "placeholder": ""
-        },
-        {
-            "name": "cics.bundle.definition.group.name",
-            "label": "CICS bundle group name",
-            "pattern": "",
-            "type": "TEXT",
-            "required": true,
-            "description": "CICS BUNDLE resource group name",
-            "placeholder": ""
-        },
-        {
-            "name": "cics.bundle.properties",
-            "label": "Properties to resolve CICS bundle",
-            "pattern": "",
-            "type": "TEXTAREA",
-            "required": false,
-            "description": "Properties to resolve CICS bundle",
-            "placeholder": ""
+          "name": "cics.bundle.delete",
+          "label": "Delete CICS bundle on zFS",
+          "pattern": "",
+          "type": "CHECKBOX",
+          "value": "false",
+          "required": false,
+          "description": "Delete CICS bundle on zFS",
+          "placeholder": ""
         }
-    ],
-    "properties": [],
-    "processes": [
-        {
-            "name": "Deploy",
-            "description": "Deploy the CICS bundle",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": true,
-            "inventoryActionType": "ADD",
-            "status": "Active",
-            "configActionType": "ADD",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/11eecbb5-1353-4eca-a668-1d9eaffe8f6a",
-            "propDefs": [{
-                "name": "cics.bundle.target.state",
-                "label": "CICS bundle target state",
-                "pattern": "",
-                "type": "SELECT",
-                "value": "Enabled",
-                "required": false,
-                "description": "CICS bundle target state",
-                "placeholder": "",
-                "allowedValues": [
-                    {
-                        "label": "Available",
-                        "value": "Available"
-                    },
-                    {
-                        "label": "Enabled",
-                        "value": "Enabled"
-                    },
-                    {
-                        "label": "Disabled",
-                        "value": "Disabled"
-                    }
-                ]
-            }],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "Download bundle",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Resolve variables in bundle if variables.properties exist",
-                        "from": "Create file resolve.properities",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Create file resolve.properities",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Undeploy any existing version of bundle from CICS",
-                        "from": "Resolve variables in bundle if variables.properties exist",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Copy bundle to CICS platform home",
-                        "from": "Delete bundle directory from CICS platform home",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "04815b03172869acc4677adad15cca",
-                        "from": "Deploy bundle to CICS as enabled",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Delete work directories",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Resolve variables in bundle if variables.properties exist",
-                        "from": "Delete work directories",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "04815b03172869acc4677adad15cca",
-                        "from": "Deploy bundle to CICS as disabled",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Deploy bundle to CICS as available",
-                        "from": "Check bundle target state",
-                        "type": "VALUE",
-                        "value": "available\nAvailable"
-                    },
-                    {
-                        "to": "Resolve variables in bundle if variables.properties exist",
-                        "from": "Download bundle",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Delete bundle directory from CICS platform home",
-                        "from": "Undeploy any existing version of bundle from CICS",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "04815b03172869acc4677adad15cca",
-                        "from": "Deploy bundle to CICS as available",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Check bundle target state",
-                        "from": "Copy bundle to CICS platform home",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Deploy bundle to CICS as enabled",
-                        "from": "Check bundle target state",
-                        "type": "VALUE",
-                        "value": ""
-                    },
-                    {
-                        "to": "Deploy bundle to CICS as disabled",
-                        "from": "Check bundle target state",
-                        "type": "VALUE",
-                        "value": "disabled\nDisabled"
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "Delete work directories",
-                        "x": -735,
-                        "y": 150,
-                        "h": 110,
-                        "w": 560
-                    },
-                    {
-                        "name": "04815b03172869acc4677adad15cca",
-                        "x": -45,
-                        "y": 1270,
-                        "h": 100,
-                        "w": 160
-                    },
-                    {
-                        "name": "Undeploy any existing version of bundle from CICS",
-                        "x": -329.00146484375,
-                        "y": 470,
-                        "h": 110,
-                        "w": 780
-                    },
-                    {
-                        "name": "Delete bundle directory from CICS platform home",
-                        "x": -327.60009765625,
-                        "y": 630,
-                        "h": 110,
-                        "w": 760
-                    },
-                    {
-                        "name": "Check bundle target state",
-                        "x": -228.75,
-                        "y": 950,
-                        "h": 110,
-                        "w": 530
-                    },
-                    {
-                        "name": "Deploy bundle to CICS as available",
-                        "x": 345,
-                        "y": 1110,
-                        "h": 110,
-                        "w": 580
-                    },
-                    {
-                        "name": "Create file resolve.properities",
-                        "x": 325,
-                        "y": 150,
-                        "h": 110,
-                        "w": 490
-                    },
-                    {
-                        "name": "Deploy bundle to CICS as enabled",
-                        "x": -245,
-                        "y": 1110,
-                        "h": 110,
-                        "w": 560
-                    },
-                    {
-                        "name": "Copy bundle to CICS platform home",
-                        "x": -246.19873046875,
-                        "y": 790,
-                        "h": 110,
-                        "w": 580
-                    },
-                    {
-                        "name": "Download bundle",
-                        "x": -145,
-                        "y": 150,
-                        "h": 110,
-                        "w": 440
-                    },
-                    {
-                        "name": "Deploy bundle to CICS as disabled",
-                        "x": -845,
-                        "y": 1110,
-                        "h": 110,
-                        "w": 570
-                    },
-                    {
-                        "name": "Resolve variables in bundle if variables.properties exist",
-                        "x": -349.35546875,
-                        "y": 310,
-                        "h": 110,
-                        "w": 840
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "412ac4ff-9d8f-490b-98c5-7227b61ed5fb",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "04815b03172869acc4677adad15cca",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Download Artifacts",
-                        "pluginName": "IBM UrbanCode Deploy Versioned File Storage",
-                        "pluginVersion": 28,
-                        "properties": {
-                            "directoryOffset": ".\/built\/",
-                            "artifactSetBaseDir": "",
-                            "fileIncludePatterns": "**\/*",
-                            "fileExcludePatterns": "",
-                            "syncMode": "FULL",
-                            "fullVerification": "true",
-                            "setFileExecuteBits": "false",
-                            "verifyFileIntegrity": "false",
-                            "versionId": "${p:version.id}",
-                            "serverUrl": "${p:server.url}",
-                            "compId": "${p:component.id}",
-                            "resId": "${p:resource.id}",
-                            "charset": "",
-                            "label": ""
-                        },
-                        "type": "plugin",
-                        "name": "Download bundle",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Copy Directory",
-                        "pluginName": "File Utils",
-                        "pluginVersion": 53,
-                        "properties": {
-                            "sourceDir": ".\/resolved\/bundles",
-                            "destDirList": "${p:cics.platform.home}\/bundles",
-                            "includes": "**\/*",
-                            "excludes": "",
-                            "mapperRules": "",
-                            "force": "false"
-                        },
-                        "type": "plugin",
-                        "name": "Copy bundle to CICS platform home",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Shell",
-                        "pluginName": "Shell",
-                        "pluginVersion": 9,
-                        "properties": {
-                            "directoryOffset": ".",
-                            "shellInterpreter": "",
-                            "scriptBody": "${p:cicsbt.directory}\/cicsbt_zos \\\n--resolve .\/built \\\n--properties .\/resolve.properties \\\n--workspace .\/workspace \\\n--output .\/resolved \\\n--verbose",
-                            "runAsDaemon": "false",
-                            "outputFile": ""
-                        },
-                        "type": "plugin",
-                        "name": "Resolve variables in bundle if variables.properties exist",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Deploy bundle",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "bundleName": "${p:cics.bundle.definition.name}",
-                            "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
-                            "resourceDefinition": "CSD",
-                            "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "${p:component.name}",
-                            "targetstatus": "ENABLED",
-                            "timeout": "300",
-                            "JCLjobstatement": "${p?:deploy.env.jobstatement}",
-                            "trace": "false",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cmas": "${p?:cics.cicsplex.cmas}",
-                            "cicsscope": "${p:cics.scope}",
-                            "cicshlq": "${p:cics.cicshlq}",
-                            "cpsmhlq": "${p:cics.cpsmhlq}",
-                            "jesHost": "${p:jes.host}",
-                            "jmonPort": "${p:jes.monitor.port}",
-                            "jesUsername": "${p:jes.user}",
-                            "jesPassword": "${p?:jes.password}",
-                            "usePassticket": "true",
-                            "irrracfJarFile": "\/usr\/include\/java_classes\/IRRRacf.jar",
-                            "irrracfLib": "\/usr\/lib"
-                        },
-                        "type": "plugin",
-                        "name": "Deploy bundle to CICS as enabled",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": true,
-                        "impersonationUseSudo": false,
-                        "commandName": "Delete Files and Directories",
-                        "pluginName": "File Utils",
-                        "pluginVersion": 53,
-                        "properties": {
-                            "baseDir": "${p:cics.platform.home}\/bundles",
-                            "includes": "${p:component.name}_${p:cics.bundle.version}\/",
-                            "excludes": "",
-                            "followSymlinks": "false",
-                            "caseSensitive": "true"
-                        },
-                        "type": "plugin",
-                        "name": "Delete bundle directory from CICS platform home",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Undeploy bundles",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "bundleNameList": "${p:cics.bundle.definition.name}",
-                            "resourceDefinition": "CSD",
-                            "groupName": "${p:cics.bundle.definition.group.name}",
-                            "targetstatus": "DISCARDED",
-                            "timeout": "300",
-                            "JCLjobstatement": "${p?:deploy.env.jobstatement}",
-                            "trace": "false",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cmas": "${p?:cics.cicsplex.cmas}",
-                            "cicsscope": "${p:cics.scope}",
-                            "cicshlq": "${p:cics.cicshlq}",
-                            "cpsmhlq": "${p:cics.cpsmhlq}",
-                            "jesHost": "${p:jes.host}",
-                            "jmonPort": "${p:jes.monitor.port}",
-                            "jesUsername": "${p:jes.user}",
-                            "jesPassword": "${p?:jes.password}",
-                            "usePassticket": "true",
-                            "irrracfJarFile": "\/usr\/include\/java_classes\/IRRRacf.jar",
-                            "irrracfLib": "\/usr\/lib"
-                        },
-                        "type": "plugin",
-                        "name": "Undeploy any existing version of bundle from CICS",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Create File",
-                        "pluginName": "File Utils",
-                        "pluginVersion": 53,
-                        "properties": {
-                            "file": "resolve.properties",
-                            "contents": "# Properties from cics.bundle.properties\n${p:cics.bundle.properties}\n\n# Properties from cics.platform.properties\n${p:environment\/cics.platform.properties}\n",
-                            "overwrite": "true",
-                            "customEncoding": ""
-                        },
-                        "type": "plugin",
-                        "name": "Create file resolve.properities",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Delete Files and Directories",
-                        "pluginName": "File Utils",
-                        "pluginVersion": 53,
-                        "properties": {
-                            "baseDir": ".",
-                            "includes": "resolved\/\nworkspace\/",
-                            "excludes": "",
-                            "followSymlinks": "false",
-                            "caseSensitive": "true"
-                        },
-                        "type": "plugin",
-                        "name": "Delete work directories",
-                        "children": []
-                    },
-                    {
-                        "propertyName": "cics.bundle.target.state",
-                        "type": "switch",
-                        "name": "Check bundle target state",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Deploy bundle",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "bundleName": "${p:cics.bundle.definition.name}",
-                            "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
-                            "resourceDefinition": "CSD",
-                            "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "${p:component.name}",
-                            "targetstatus": "DISABLED",
-                            "timeout": "300",
-                            "JCLjobstatement": "${p?:deploy.env.jobstatement}",
-                            "trace": "false",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cmas": "${p?:cics.cicsplex.cmas}",
-                            "cicsscope": "${p:cics.scope}",
-                            "cicshlq": "${p:cics.cicshlq}",
-                            "cpsmhlq": "${p:cics.cpsmhlq}",
-                            "jesHost": "${p:jes.host}",
-                            "jmonPort": "${p:jes.monitor.port}",
-                            "jesUsername": "${p:jes.user}",
-                            "jesPassword": "${p?:jes.password}",
-                            "usePassticket": "true",
-                            "irrracfJarFile": "\/usr\/include\/java_classes\/IRRRacf.jar",
-                            "irrracfLib": "\/usr\/lib"
-                        },
-                        "type": "plugin",
-                        "name": "Deploy bundle to CICS as disabled",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Deploy bundle",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "bundleName": "${p:cics.bundle.definition.name}",
-                            "bundleDirectory": "${p:cics.platform.home}\/bundles\/${p:component.name}_${p:cics.bundle.version}",
-                            "resourceDefinition": "CSD",
-                            "groupName": "${p:cics.bundle.definition.group.name}",
-                            "description": "${p:component.name}",
-                            "targetstatus": "AVAILABLE",
-                            "timeout": "300",
-                            "JCLjobstatement": "${p?:deploy.env.jobstatement}",
-                            "trace": "false",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cmas": "${p?:cics.cicsplex.cmas}",
-                            "cicsscope": "${p:cics.scope}",
-                            "cicshlq": "${p:cics.cicshlq}",
-                            "cpsmhlq": "${p:cics.cpsmhlq}",
-                            "jesHost": "${p:jes.host}",
-                            "jmonPort": "${p:jes.monitor.port}",
-                            "jesUsername": "${p:jes.user}",
-                            "jesPassword": "${p?:jes.password}",
-                            "usePassticket": "true",
-                            "irrracfJarFile": "\/usr\/include\/java_classes\/IRRRacf.jar",
-                            "irrracfLib": "\/usr\/lib"
-                        },
-                        "type": "plugin",
-                        "name": "Deploy bundle to CICS as available",
-                        "children": []
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Disable",
-            "description": "Disable the CICS bundle",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": false,
-            "status": "",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/58327339-1344-477b-bffe-b249b944e9dc",
-            "propDefs": [],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "00380f319ab62695680666b6eb1a7a",
-                        "from": "Check the bundle is disabled",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Disable the bundle",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Check the bundle is disabled",
-                        "from": "Disable the bundle",
-                        "type": "SUCCESS",
-                        "value": ""
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "00380f319ab62695680666b6eb1a7a",
-                        "x": -5,
-                        "y": 415,
-                        "h": 80,
-                        "w": 120
-                    },
-                    {
-                        "name": "Disable the bundle",
-                        "x": -75,
-                        "y": 145,
-                        "h": 70,
-                        "w": 260
-                    },
-                    {
-                        "name": "Check the bundle is disabled",
-                        "x": -125,
-                        "y": 280,
-                        "h": 70,
-                        "w": 360
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "f8afcf07-ed55-40ed-ac6c-c5971181d648",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "00380f319ab62695680666b6eb1a7a",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Disable resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hJg7KRXm0bE7uNk2TvCglw==|k63aSuWyXpIbR0\/+E0tpSVhV5S29f4HqIn0SCn48haY=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Ci50PbdExpDqhpT77lMeRQ==|hx5hivJUnorlH0CQrexrtWaA\/hkZGVt5BUjLCqzr4fI=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|sT1Vw\/mf9r6vq0PYbCNAkg==|25TnoG34RzUmmoyUnoCTKH4e6mmoXRRL9oBwVf\/Pxfc=}"
-                        },
-                        "type": "plugin",
-                        "name": "Disable the bundle",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Check enable status of resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "expectedStatus": "DISABLED",
-                            "timeout": "300",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|GvkYSEkCDvmNYOCjXmiNKw==|Ib5f5ahDNOwjDmqZ9GwFuqy6GA+Ph+Ok124mnS2ib2w=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hXn5WK8YXTiUZsk5\/q3Z6Q==|gXWcNmpNFTDcN8XhWQ0UBJM31CfG\/D9wcU24IzZdPBo=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|YQritRT99SE7aPtfE9b\/sw==|h0HKlDaN0+6TdKsj+ZiuBUJadfY94giT\/Y6JhmqIpE4=}"
-                        },
-                        "type": "plugin",
-                        "name": "Check the bundle is disabled",
-                        "children": []
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Enable",
-            "description": "Enable the CICS bundle",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": false,
-            "status": "",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/68e94f91-9c7c-483c-b303-7870497480ae",
-            "propDefs": [],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "Enable the bundle",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Check enable bundle is enabled",
-                        "from": "Enable the bundle",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "fbcd1225f5667bd471075aca93b560",
-                        "from": "Check enable bundle is enabled",
-                        "type": "SUCCESS",
-                        "value": ""
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "x": -5,
-                        "y": 415,
-                        "h": 80,
-                        "w": 120
-                    },
-                    {
-                        "name": "Enable the bundle",
-                        "x": -70,
-                        "y": 145,
-                        "h": 70,
-                        "w": 250
-                    },
-                    {
-                        "name": "Check enable bundle is enabled",
-                        "x": -125,
-                        "y": 280,
-                        "h": 70,
-                        "w": 360
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "68e678e9-6ade-41bd-b877-c4e2c1d01983",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Enable resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|hHByfUg5uWram7mam+39HA==|UZUyhVzZqPUfqQmGceCTZoP6CMKAE7bkjcty3l27S18=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|g\/8MUTTTxp9LndhM3BZvqw==|trIe2KI9z\/WmyUGgJQUmEmjGgyC2VEq7lmHyWY0wKrQ=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|z5sN1AqdzFQw03EUuVxmbQ==|SOTafyT9MYH5fNWYoAWH\/dXqi03WDPEZG6Gs4256Hwo=}"
-                        },
-                        "type": "plugin",
-                        "name": "Enable the bundle",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Check enable status of resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "expectedStatus": "ENABLED",
-                            "timeout": "300",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|ztRco+4dguMX0PfmvbnB1A==|fJ8JOFqtTBFSZODFCf6J++iDfKKA+JsTlZgGv0aOO5E=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|0JUVmWyB9xzkqC8VfdFL5w==|lLt8sLOTTRO1JxIg9j97nNVV7veFx10SemkMjhbQXQ0=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|2RVyDCAVFsXfrfP5lMRuow==|olzJHzHeNwBzVUJ7+tjSj+bc6U37irA+4KzE35qFkD8=}"
-                        },
-                        "type": "plugin",
-                        "name": "Check enable bundle is enabled",
-                        "children": []
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Make available",
-            "description": "Make the CICS bundle available",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": false,
-            "status": "",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/f615cea3-693a-4153-acd8-6663fc61e5c9",
-            "propDefs": [],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "Make bundle available",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "fbcd1225f5667bd471075aca93b560",
-                        "from": "Check bundle is available",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Check bundle is available",
-                        "from": "Make bundle available",
-                        "type": "SUCCESS",
-                        "value": ""
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "Check bundle is available",
-                        "x": -130,
-                        "y": 280,
-                        "h": 70,
-                        "w": 370
-                    },
-                    {
-                        "name": "Make bundle available",
-                        "x": -100,
-                        "y": 145,
-                        "h": 70,
-                        "w": 310
-                    },
-                    {
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "x": -5,
-                        "y": 415,
-                        "h": 80,
-                        "w": 120
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "4bf1bdfe-ae83-4145-9473-980c6f143e80",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Make resources available",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|sNqFWNB61t6OB7j9r0RaAA==|1noFf+vm6DEXc5rH2K77kKjkVsdrGozoFUlnoEKZS64=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|lr2XDPHt8vcTxvVqelwxZA==|MuP+JRwsBEzxFPtFOHhFpOuwQIH+dk51DjHktMCa9PY=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|qv6xkQC4r237RCbMtBQapQ==|sIKuuCLyYi36T8c8VK69RLllqgXGG2AVDQoU97ki+u4=}"
-                        },
-                        "type": "plugin",
-                        "name": "Make bundle available",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Check available status of resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "expectedStatus": "AVAILABLE",
-                            "timeout": "300",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Sk1fOYyshRABAajSYZW25A==|ykZgp\/MOfRErqOwdRJvetRf5DvnOrUYBMyuYBVkB0ms=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|\/7nxrcJYRdYiaHPkeHhloQ==|tPm0nEDuI5\/xxmMVNbO1QobDy1H8wC0LE+PrssM45MU=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|AvOF4FVQ3yEzRA0t\/17kaw==|i4DIR\/5UtqNsjzQOLu\/kZtXUPIF7mm63nbXBvXZpb8w=}"
-                        },
-                        "type": "plugin",
-                        "name": "Check bundle is available",
-                        "children": []
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Make unavailable",
-            "description": "Make the CICS bundle unavailable",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": false,
-            "status": "",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/25692e16-13e2-4cfe-880c-6e9b40ef54f9",
-            "propDefs": [],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "Check bundle is unavailable",
-                        "from": "Make bundle unavailable",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "fbcd1225f5667bd471075aca93b560",
-                        "from": "Check bundle is unavailable",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Make bundle unavailable",
-                        "type": "ALWAYS",
-                        "value": ""
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "Make bundle unavailable",
-                        "x": -105,
-                        "y": 145,
-                        "h": 70,
-                        "w": 320
-                    },
-                    {
-                        "name": "Check bundle is unavailable",
-                        "x": -130,
-                        "y": 280,
-                        "h": 70,
-                        "w": 370
-                    },
-                    {
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "x": -5,
-                        "y": 415,
-                        "h": 80,
-                        "w": 120
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "4b6a7b1f-c591-4a19-ad77-ac7b8c69dc3c",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "fbcd1225f5667bd471075aca93b560",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Check available status of resources",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "expectedStatus": "UNAVAILABLE",
-                            "timeout": "300",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p?:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|iUjvpFkoBET7nPVSzm5bQA==|bvCTRW2CXkN+EWanWhilINDN2I+d0zEzed3kZUP0Y0s=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|Qc\/pzX33b9129uyXH+O0Vg==|WN4ruZbFHhP85fBltIHaaGtIYitrsyohSPTgmyjvnII=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|4HRkjszUTCQaK0LtoWXj\/A==|\/bLqq74KumOfJhlYxnhwsGWWUTu2Hs1sgoXyXI4XOPM=}"
-                        },
-                        "type": "plugin",
-                        "name": "Check bundle is unavailable",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Make resources unavailable",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "resourceNameList": "${p:cics.bundle.definition.name}",
-                            "resourceType": "BUNDLE",
-                            "hostname": "${p:cics.host}",
-                            "port": "${p:cics.cmciport}",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cicsscope": "${p?:cics.scope}",
-                            "username": "${p?:cics.username}",
-                            "password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|e7gKdFxlPUq7am3HGTZxvA==|ZBGyxeBIA4OkKDhg5VU5JHRDqi0A9dAdkidtDiCAqmk=}",
-                            "ssl": "${p?:cics.ssl}",
-                            "ks_location": "${p?:cics.kslocation}",
-                            "ks_type": "${p?:cics.kstype}",
-                            "ks_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|lKq+n94OVMZ\/+Iztrh1RFw==|gdXiNU9pk8fVd+wL+9msLWfuZ9QBK80Ti5PVMw4g2W8=}",
-                            "ts_location": "${p?:cics.tslocation}",
-                            "ts_type": "${p?:cics.tstype}",
-                            "ts_password": "crypt_v1{AES\/CBC\/PKCS5Padding|aes128keyxnei|2+1CLj3xu7zXUTpE314fFg==|pJQ1CXOVwav48FM6kEMV+1Iulp6wX3Y628i4eh\/YY0E=}"
-                        },
-                        "type": "plugin",
-                        "name": "Make bundle unavailable",
-                        "children": []
-                    }
-                ]
-            }
-        },
-        {
-            "name": "Undeploy",
-            "description": "Undeploy the CICS bundle",
-            "defaultWorkingDir": "${p:resource\/work.dir}\/${p:component.name}",
-            "takesVersion": true,
-            "inventoryActionType": "REMOVE",
-            "status": "Active",
-            "active": true,
-            "path": "componentTemplates\/14c5b8a0-ed82-46b3-a0fe-4467b92c7ff0\/processes\/050acc2e-48aa-4f20-a7f7-b0cb4c091c89",
-            "propDefs": [{
-                "name": "cics.bundle.delete",
-                "label": "Delete CICS bundle on zFS",
-                "pattern": "",
-                "type": "CHECKBOX",
-                "value": "false",
-                "required": false,
-                "description": "Delete CICS bundle on zFS",
-                "placeholder": ""
-            }],
-            "rootActivity": {
-                "edges": [
-                    {
-                        "to": "Undeploy bundle from CICS",
-                        "type": "ALWAYS",
-                        "value": ""
-                    },
-                    {
-                        "to": "3d0c57cf4840439429313a389e00f5",
-                        "from": "Check cics.bundle.delete",
-                        "type": "VALUE",
-                        "value": ""
-                    },
-                    {
-                        "to": "Check cics.bundle.delete",
-                        "from": "Undeploy bundle from CICS",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "3d0c57cf4840439429313a389e00f5",
-                        "from": "Delete bundle directory from CICS platform home",
-                        "type": "SUCCESS",
-                        "value": ""
-                    },
-                    {
-                        "to": "Delete bundle directory from CICS platform home",
-                        "from": "Check cics.bundle.delete",
-                        "type": "VALUE",
-                        "value": "true"
-                    }
-                ],
-                "offsets": [
-                    {
-                        "name": "Check cics.bundle.delete",
-                        "x": -81.49977137631458,
-                        "y": 250,
-                        "h": 70,
-                        "w": 270
-                    },
-                    {
-                        "name": "Delete bundle directory from CICS platform home",
-                        "x": -35.49954275262917,
-                        "y": 370,
-                        "h": 70,
-                        "w": 410
-                    },
-                    {
-                        "name": "3d0c57cf4840439429313a389e00f5",
-                        "x": -7.999542752629168,
-                        "y": 490,
-                        "h": 80,
-                        "w": 120
-                    },
-                    {
-                        "name": "Undeploy bundle from CICS",
-                        "x": -85,
-                        "y": 130,
-                        "h": 70,
-                        "w": 280
-                    }
-                ],
-                "layoutMode": "auto",
-                "type": "graph",
-                "name": "edb580c2-16f9-47a3-9fa3-e25d224fdd50",
-                "children": [
-                    {
-                        "type": "finish",
-                        "name": "3d0c57cf4840439429313a389e00f5",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": false,
-                        "impersonationUseSudo": false,
-                        "commandName": "Undeploy bundles",
-                        "pluginName": "CICS TS",
-                        "pluginVersion": 38,
-                        "properties": {
-                            "bundleNameList": "${p:cics.bundle.definition.name}",
-                            "resourceDefinition": "CSD",
-                            "groupName": "${p:cics.bundle.definition.group.name}",
-                            "targetstatus": "DISCARDED",
-                            "timeout": "300",
-                            "JCLjobstatement": "${p?:deploy.env.jobstatement}",
-                            "trace": "false",
-                            "cicsplex": "${p:cics.cicsplex}",
-                            "cmas": "${p?:cics.cicsplex.cmas}",
-                            "cicsscope": "${p:cics.scope}",
-                            "cicshlq": "${p:cics.cicshlq}",
-                            "cpsmhlq": "${p:cics.cpsmhlq}",
-                            "jesHost": "${p:jes.host}",
-                            "jmonPort": "${p:jes.monitor.port}",
-                            "jesUsername": "${p:jes.user}",
-                            "jesPassword": "${p?:jes.password}",
-                            "usePassticket": "true",
-                            "irrracfJarFile": "\/usr\/include\/java_classes\/IRRRacf.jar",
-                            "irrracfLib": "\/usr\/lib"
-                        },
-                        "type": "plugin",
-                        "name": "Undeploy bundle from CICS",
-                        "children": []
-                    },
-                    {
-                        "allowFailure": false,
-                        "useImpersonation": false,
-                        "showHidden": true,
-                        "impersonationUseSudo": false,
-                        "workingDir": "${p:cics.platform.home}\/bundles",
-                        "commandName": "Delete Files and Directories",
-                        "pluginName": "File Utils",
-                        "pluginVersion": 53,
-                        "properties": {
-                            "baseDir": ".",
-                            "includes": "${p:component.name}_${p:cics.bundle.version}\/**",
-                            "excludes": "",
-                            "followSymlinks": "false",
-                            "caseSensitive": "true"
-                        },
-                        "type": "plugin",
-                        "name": "Delete bundle directory from CICS platform home",
-                        "children": []
-                    },
-                    {
-                        "propertyName": "cics.bundle.delete",
-                        "type": "switch",
-                        "name": "Check cics.bundle.delete",
-                        "children": []
-                    }
-                ]
-            }
-        }
-    ],
-    "genericProcesses": [],
-    "teamMappings": [{
-        "teamId": "c4d14eb6-a7b8-4a9b-b329-6dcf547b2984",
-        "teamLabel": "CICS-Plugin",
-        "resourceTypeId": "20000000000000000000000000000102",
-        "resourceTypeName": "Component Template"
-    }]
+      ],
+      "rootActivity": {
+        "edges": [
+          {
+            "to": "Undeploy bundle from CICS",
+            "type": "ALWAYS",
+            "value": ""
+          },
+          {
+            "to": "3d0c57cf4840439429313a389e00f5",
+            "from": "Check cics.bundle.delete",
+            "type": "VALUE",
+            "value": ""
+          },
+          {
+            "to": "Check cics.bundle.delete",
+            "from": "Undeploy bundle from CICS",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "3d0c57cf4840439429313a389e00f5",
+            "from": "Delete bundle directory from CICS platform home",
+            "type": "SUCCESS",
+            "value": ""
+          },
+          {
+            "to": "Delete bundle directory from CICS platform home",
+            "from": "Check cics.bundle.delete",
+            "type": "VALUE",
+            "value": "true"
+          }
+        ],
+        "offsets": [
+          {
+            "name": "Check cics.bundle.delete",
+            "x": -81.49977137631458,
+            "y": 250,
+            "h": 70,
+            "w": 270
+          },
+          {
+            "name": "Delete bundle directory from CICS platform home",
+            "x": -35.49954275262917,
+            "y": 370,
+            "h": 70,
+            "w": 410
+          },
+          {
+            "name": "3d0c57cf4840439429313a389e00f5",
+            "x": -7.999542752629168,
+            "y": 490,
+            "h": 80,
+            "w": 120
+          },
+          {
+            "name": "Undeploy bundle from CICS",
+            "x": -85,
+            "y": 130,
+            "h": 70,
+            "w": 280
+          }
+        ],
+        "layoutMode": "auto",
+        "type": "graph",
+        "name": "edb580c2-16f9-47a3-9fa3-e25d224fdd50",
+        "children": [
+          {
+            "type": "finish",
+            "name": "3d0c57cf4840439429313a389e00f5",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": false,
+            "impersonationUseSudo": false,
+            "commandName": "Undeploy bundles",
+            "pluginName": "CICS TS",
+            "pluginVersion": 38,
+            "properties": {
+              "bundleNameList": "${p:cics.bundle.definition.name}",
+              "resourceDefinition": "CSD",
+              "groupName": "${p:cics.bundle.definition.group.name}",
+              "targetstatus": "DISCARDED",
+              "timeout": "300",
+              "JCLjobstatement": "${p?:deploy.env.jobstatement}",
+              "trace": "false",
+              "cicsplex": "${p:cics.cicsplex}",
+              "cmas": "${p?:cics.cicsplex.cmas}",
+              "cicsscope": "${p:cics.scope}",
+              "cicshlq": "${p:cics.cicshlq}",
+              "cpsmhlq": "${p:cics.cpsmhlq}",
+              "jesHost": "${p:jes.host}",
+              "jmonPort": "${p:jes.monitor.port}",
+              "jesUsername": "${p:jes.user}",
+              "jesPassword": "${p?:jes.password}",
+              "usePassticket": "true",
+              "irrracfJarFile": "/usr/include/java_classes/IRRRacf.jar",
+              "irrracfLib": "/usr/lib"
+            },
+            "type": "plugin",
+            "name": "Undeploy bundle from CICS",
+            "children": []
+          },
+          {
+            "allowFailure": false,
+            "useImpersonation": false,
+            "showHidden": true,
+            "impersonationUseSudo": false,
+            "workingDir": "${p:cics.platform.home}/bundles",
+            "commandName": "Delete Files and Directories",
+            "pluginName": "File Utils",
+            "pluginVersion": 53,
+            "properties": {
+              "baseDir": ".",
+              "includes": "${p:component.name}_${p:cics.bundle.version}/**",
+              "excludes": "",
+              "followSymlinks": "false",
+              "caseSensitive": "true"
+            },
+            "type": "plugin",
+            "name": "Delete bundle directory from CICS platform home",
+            "children": []
+          },
+          {
+            "propertyName": "cics.bundle.delete",
+            "type": "switch",
+            "name": "Check cics.bundle.delete",
+            "children": []
+          }
+        ]
+      }
+    }
+  ],
+  "genericProcesses": [],
+  "teamMappings": [
+    {
+      "teamId": "c4d14eb6-a7b8-4a9b-b329-6dcf547b2984",
+      "teamLabel": "CICS-Plugin",
+      "resourceTypeId": "20000000000000000000000000000102",
+      "resourceTypeName": "Component Template"
+    }
+  ]
 }
