@@ -2,7 +2,7 @@
 
 Script to add pre-build Java archive files to a CICS bundle, including:
 
-* .jar files for OSGI bundles
+* .jar files for Java archives
 * .war files for web archives
 * .eba files for enterprise business archives
 * .ear files for enterprise archives
@@ -19,7 +19,7 @@ If the CICS bundle contains only pre-built Java archive files, it does not need 
 ## Usage
  
 ~~~~
-Usage:	addtocicsbundle [-hv] [-j JVMSERVER] [-V VERSION] -a FILES DIRECTORY
+Usage: addtocicsbundle [-hv] [-j JVMSERVER] [-V VERSION] -a FILES DIRECTORY
 
 Add Java pre-built archive files to the CICS bundle specified by DIRECTORY.
 
@@ -39,7 +39,7 @@ DIRECTORY is the CICS bundle directory
 
 This example will create a CICS bundle in directory output/bundles/com.ibm.cics.server.examples.bundle and add all the Java archives found at javaarchives/*.
 
-Note the `-a "javaarchives/*"` parameter includes quotation marks to avoid the shell interpreter expanding the * character.
+Note in the following example the `-a "javaarchives/*"` parameter includes quotation marks to avoid the shell interpreter expanding the * character.
 
 ~~~~console
 $ addtocicsbundle -v -a "javaarchives/*" output/bundles/com.ibm.cics.server.examples.bundle
