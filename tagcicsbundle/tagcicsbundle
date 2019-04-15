@@ -30,7 +30,7 @@ tag_file() {
 	extension="${filename##*.}"
 
 	case "$extension" in
-	"transaction"|"file"|"jvmserver"|"library"|"pipeline"|"program"|"tcpipservice"|"urimap"|"webservice"|"osgibundle"|"warbundle"|"ebabundle"|"earbundle"|"xml"|"properties")
+	"transaction"|"file"|"jvmserver"|"library"|"pipeline"|"program"|"tcpipservice"|"urimap"|"webservice"|"osgibundle"|"warbundle"|"ebabundle"|"earbundle"|"policy"|"xml"|"properties")
 		echo "$1 - tagging as UTF-8"
 		chtag -tc UTF-8 $1
 		;;
