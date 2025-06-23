@@ -1,3 +1,11 @@
+> [!WARNING]
+> **This repository has been archived**
+> 
+> IBM Legacy Public Repository Disclosure: All content in this repository including code has been provided by IBM under the associated open source software license and IBM is under no obligation to provide enhancements, updates, or support.
+> IBM developers produced this code as an open source project (not as an IBM product), and IBM makes no assertions as to the level of quality nor security, and will not be maintaining this code going forward.
+
+You can build and deploy Java applications using [cics-bundle-gradle](https://github.com/IBM/cics-bundle-gradle) and [cics-bundle-maven](https://github.com/IBM/cics-bundle-maven). To automate management of CICS resources, use the [IBM z/OS CICS Ansible collection](https://github.com/ansible-collections/ibm_zos_cics).
+
 # cics-bundle-scripts
 Sample scripts to process the contents in a CICS bundle:
 
